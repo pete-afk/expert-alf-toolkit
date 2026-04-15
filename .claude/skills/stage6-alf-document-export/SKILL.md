@@ -115,10 +115,15 @@ results/{company}/
 ```
 
 **Constraints:**
-- Content MUST be copied exactly from `rules_draft.md` — no additions, no omissions, no rewording
+- **2,000자 제한 (필수)**: 채널톡 ALF Rules API의 `instruction` 필드는 최대 2,000자. 모든 규칙 파일은 **제목 행을 제외하고 2,000자 이내**여야 한다.
+  - 분리 후 각 파일의 글자 수를 `wc -m`으로 검증
+  - 2,000자를 초과하는 파일은 **서브 섹션 단위로 추가 분할** (예: `09_master_rules.md` → `09a_designated_rules.md` + `09b_fallback_defense.md`)
+- **간결한 포맷**: 불필요한 마크다운 테이블, 이미지 참조, 장황한 예시를 제거하고 순수 텍스트/불렛 형태로 압축
+  - 테이블 → 불렛 리스트로 변환
+  - 긴 블록 인용 → 핵심만 1-2줄로 축약
+  - 예시는 1개만 유지 (복수 예시 제거)
 - If a section does not exist in the source file, skip it and note in the verification report
 - Sub-section numbering (### 1.1, ### 1.2, etc.) MUST be preserved
-- Tables, code blocks, and formatting MUST be preserved exactly
 
 **Expected Output:**
 ```

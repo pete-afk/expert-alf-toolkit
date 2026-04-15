@@ -248,6 +248,12 @@ Include all of the following sections:
    - **CoT 자가 검증 문구**: 섹션 최하단에 배치
    - 블록 인용(`>`) + 구분선(`---`)으로 구조적 격리
 
+**⚠️ 글자 수 제한 (필수)**:
+- 채널톡 ALF Rules API는 `instruction` 필드 **최대 2,000자** 제한
+- rules_draft.md의 **각 섹션이 2,000자를 초과하지 않도록** 작성
+- 초과 예상 시: 불필요한 마크다운 테이블을 불렛으로 변환, 예시를 1개로 축소, 장황한 블록 인용 제거
+- 섹션 9(필수 응대 규칙)는 내용이 많으므로 "지정 규칙 + 자동화 불가 상황"과 "Fallback 방어 + CoT 검증"으로 **2개 파일로 분할**되는 것을 전제로 작성
+
 **Output format**: `templates/ALF_RULES_DRAFT_template.md` 구조를 따릅니다.
 
 #### 2-B. rag_items.md — RAG Knowledge Items
