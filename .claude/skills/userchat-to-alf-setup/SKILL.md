@@ -1,13 +1,15 @@
 ---
 name: userchat-to-alf-setup
-description: Complete end-to-end pipeline for transforming Excel customer support data into production-ready Agent SOP documents, flowcharts, ALF implementation package, individual ALF registration files, and client-facing deployment scenario through 7 stages.
+description: Complete end-to-end pipeline for transforming Excel customer support data into production-ready ALF setup files (rules, RAG documents, tasks). Optimized for minimal token usage — generates only the artifacts needed for Channel.io ALF registration.
 ---
 
-# Userchat-to-ALF-Setup Complete Pipeline
+# Userchat-to-ALF-Setup Pipeline
 
 ## Overview
 
-Orchestrates the complete pipeline: Excel data → Clustering → Pattern Extraction → SOP Generation → Flowcharts → ALF Package → ALF Document Export → Deployment Scenario.
+Excel 상담 데이터 → 클러스터링 → 패턴 추출 → SOP 생성 → ALF 세팅 파일 (규칙 + RAG + 태스크) 생성.
+
+**보고서/분석 산출물은 생성하지 않습니다.** 보고서가 필요하면 `/stage5-sop-to-guide` 를 standalone으로 실행하세요.
 
 **Language:** Detect the language from the user's first message and respond in that language throughout. Support Korean (한국어) and Japanese (日本語). Default to Korean if language is unclear.
 
@@ -16,29 +18,22 @@ Orchestrates the complete pipeline: Excel data → Clustering → Pattern Extrac
 Excel Input (고객 상담 데이터)
     ↓
 Stage 1: Clustering (Python) [~3 min]
-    → clustered_data.xlsx, cluster_tags.xlsx, analysis_report.md
+    → clustered_data.xlsx, cluster_tags.xlsx, messages.csv
     ↓
 Stage 2: Pattern Extraction (LLM) [~8 min]
-    → patterns.json (with sop_topic_map), faq.json, patterns_enriched.json
+    → patterns.json, faq.json, patterns_enriched.json
     ↓
 Stage 3: SOP Generation + Verification (LLM) [~12 min]
-    → TS_*.sop.md, HT_*.sop.md (verified against real conversations)
+    → TS_*.sop.md, HT_*.sop.md
     ↓
-Stage 4: Flowchart Generation (LLM) [~4 min, optional]
-    → *_FLOWCHART.md (Mermaid markdown)
-    ↓
-Stage 5: ALF Implementation Package (LLM + Python) [~25 min]
-    → rules_draft.md, rag_items.md, tasks, api_requirements,
-      alf_implementation_guide.md, analysis_report.md
+Stage 5: ALF Setup Files (Python + LLM) [~10 min]
+    → rules_draft.md, rag_items.md, TASK*.md, api_requirements.md
     ↓
 Stage 6: ALF Document Export (LLM) [~10 min]
-    → 07_alf_documents/rules/ (individual rule files), 07_alf_documents/rag/ (individual RAG docs)
-    ↓
-Stage 7: Deployment Scenario (LLM) [~5 min]
-    → deployment_qa_set.html, deployment_qa_set.md (+ optional Notion)
+    → rules/ (individual rule files), rag/ (individual RAG docs)
 ```
 
-**Total Time**: ~65-80 minutes
+**Total Time**: ~35-45 minutes
 
 ## Parameters
 
@@ -54,13 +49,6 @@ Stage 7: Deployment Scenario (LLM) [~5 min]
 
 ### Optional
 - **auto_proceed** (default: true): `true` = 단계 간 자동 진행, `false` = 단계마다 확인
-- **generate_flowcharts** (default: true): Stage 4 실행 여부
-- **flowchart_target** (default: "all"): `"all"`, `"ts_only"`, `"ht_only"`
-- **flowchart_format** (default: "markdown"): `"markdown"`, `"svg"`, `"both"`
-- **generate_alf_package** (default: true): Stage 5 실행 여부
-- **generate_alf_export** (default: true): Stage 6 실행 여부
-- **generate_deployment_scenario** (default: true): Stage 7 실행 여부
-- **notion_parent_page** (default: none): Notion 부모 페이지 URL/ID (Stage 7에서 사용)
 
 ## Steps
 
@@ -80,15 +68,15 @@ Stage 7: Deployment Scenario (LLM) [~5 min]
 
 Run `/stage1-clustering` with auto-detected parameters.
 
+**Pipeline-mode override:**
+- `analysis_report.md` 생성 생략 (후속 스테이지에서 미사용)
+
 **Outputs:**
 - `results/{company}/01_clustering/{company}_clustered.xlsx`
 - `results/{company}/01_clustering/{company}_tags.xlsx`
 - `results/{company}/01_clustering/{company}_messages.csv`
-- `results/{company}/01_clustering/analysis_report.md`
 
 **Quality Checks:** Clustering succeeded, no single cluster >50%, silhouette score >0.05
-
-**Transition:** If `auto_proceed=true`, proceed immediately. Otherwise ask user.
 
 ---
 
@@ -96,23 +84,19 @@ Run `/stage1-clustering` with auto-detected parameters.
 
 Run `/stage2-extraction` with auto-detected parameters.
 
-**Key defaults (updated):**
-- `min_total_samples`: **500** (increased from 300)
+**Key defaults:**
+- `min_total_samples`: **500**
 - `n_samples_per_cluster`: `max(25, ceil(500 / K))`
 
-**Outputs:** `patterns.json` (with `sop_topic_map`), `faq.json`, `keywords.json`, `patterns_enriched.json`
+**Outputs:** `patterns.json` (with `sop_topic_map`), `faq.json`, `patterns_enriched.json`
 
 **Quality Checks:** All JSON valid, patterns extracted, FAQ pairs are specific
-
-**Transition:** If `auto_proceed=true`, proceed immediately. Otherwise ask user.
 
 ---
 
 ### 4. Execute Stage 3: SOP Generation + Verification
 
 Run `/stage3-sop-generation` with auto-detected parameters.
-
-**Key change:** Stage 3 now includes a **verification loop** — each SOP is tested against 3-5 real conversations from enriched data, and gaps are fixed before finalizing.
 
 **Outputs:**
 - `results/{company}/03_sop/HT_*.sop.md` (multiple files)
@@ -121,53 +105,35 @@ Run `/stage3-sop-generation` with auto-detected parameters.
 
 **Quality Checks:** Template structure followed, Cases include concrete details, verification coverage >70%
 
-**Transition:** If `auto_proceed=true`, proceed immediately. Otherwise ask user.
-
 ---
 
-### 5. Execute Stage 4: Flowchart Generation (optional, default enabled)
+### 5. Execute Stage 5: ALF Setup Files
 
-Run `/stage4-flowchart-generation`.
+Run `/stage5-sop-to-guide` with **pipeline-mode overrides**.
 
-**Skip if:** `generate_flowcharts=false` or user declines during review.
+**⚠️ Pipeline-mode: Step 2 + Step 5만 실행. 나머지 스킵.**
 
-**Outputs:** `*_FLOWCHART.md`, optionally `*_flowchart.svg`
+| Step | 실행 여부 | 사유 |
+|------|-----------|------|
+| Step 1 (파라미터 수집) | ✅ 실행 | 회사명, 파일 경로 확인 필요. 단, `monthly_volume`, `hourly_wage` 등 ROI 관련 파라미터는 수집하지 않음 |
+| Step 2 (rules_draft + rag_items) | ✅ 실행 | **핵심 산출물** |
+| Step 3 (교차분석 + 자동화분석) | ❌ 스킵 | 보고서용. ALF 세팅에 불필요 |
+| Step 4 (ROI 계산) | ❌ 스킵 | 보고서용 |
+| Step 5 (태스크 + API 요건) | ✅ 실행 | **핵심 산출물**. SOP만으로 태스크 생성 (automation_analysis 없이) |
+| Step 6 (도입 가이드) | ❌ 스킵 | 영업 보고서 |
+| Step 7 (분석 리포트) | ❌ 스킵 | 데이터 분석 보고서 |
 
----
-
-### 6. Execute Stage 5: ALF Implementation Package (default enabled)
-
-Run `/stage5-sop-to-guide` with the following **pipeline-mode overrides**:
-
-**Skip if:** `generate_alf_package=false`
-
-**Note:** Steps 3-A (cross_analysis + heatmap) and 3-B (automation_analysis) run as **intermediate inputs** for Steps 6-7, but are NOT listed as pipeline deliverables.
-
-**Pipeline deliverables (final outputs):**
+**Outputs:**
 - `results/{company}/06_sales_report/alf_setup/rules_draft.md`
 - `results/{company}/06_sales_report/alf_setup/rag_items.md`
 - `results/{company}/05_tasks/TASK{N}_{name}.md`
 - `results/{company}/{company}_api_requirements.md`
-- `results/{company}/{company}_alf_implementation_guide.md`
-- `results/{company}/06_sales_report/{company}_analysis_report.md`
-
-**Intermediate files (generated but not deliverables):**
-- `06_sales_report/analysis/cross_analysis.json`
-- `06_sales_report/analysis/heatmap.png`
-- `06_sales_report/analysis/automation_analysis.md`
-- `06_sales_report/sales_report_config.json`
-
-**Quality Checks:** Rules draft has 9 sections, RAG items have Priority 1+2, ROI figures generated
-
-**Transition:** If `auto_proceed=true`, proceed immediately. Otherwise ask user.
 
 ---
 
-### 7. Execute Stage 6: ALF Document Export (default enabled)
+### 6. Execute Stage 6: ALF Document Export
 
 Run `/stage6-alf-document-export`.
-
-**Skip if:** `generate_alf_export=false` or Stage 5 was skipped.
 
 **Outputs:**
 - `results/{company}/07_alf_documents/rules/01~09_*.md` (9 individual rule files)
@@ -177,66 +143,54 @@ Run `/stage6-alf-document-export`.
 
 ---
 
-### 8. Execute Stage 7: Deployment Scenario (default enabled)
-
-Run `/stage7-deployment-scenario`.
-
-**Skip if:** `generate_deployment_scenario=false` or Stage 6 was skipped.
-
-**Outputs:**
-- `results/{company}/08_deployment/deployment_qa_set.html` (고객사 공유용)
-- `results/{company}/08_deployment/deployment_qa_set.md` (로컬 보관용)
-- Notion pages (if `notion_parent_page` provided)
-
-**Quality Checks:** All categories mapped, each has test queries, Step 1/2 classification consistent with api_requirements
-
----
-
-### 9. Validate and Summarize
+### 7. Validate and Summarize
 
 **Verify all outputs exist:**
 ```
 results/{company}/
-├── 01_clustering/  (clustered.xlsx, tags.xlsx, messages.csv, analysis_report.md)
-├── 02_extraction/  (patterns.json, faq.json, keywords.json, patterns_enriched.json)
-├── 03_sop/         (HT_*.sop.md, TS_*.sop.md, metadata.json, *_FLOWCHART.md)
+├── 01_clustering/  (clustered.xlsx, tags.xlsx, messages.csv)
+├── 02_extraction/  (patterns.json, faq.json, patterns_enriched.json)
+├── 03_sop/         (HT_*.sop.md, TS_*.sop.md, metadata.json)
 ├── 05_tasks/       (TASK{N}_{name}.md)
 ├── 06_sales_report/
-│   ├── alf_setup/  (rules_draft.md, rag_items.md)
-│   └── {company}_analysis_report.md
-├── 07_alf_documents/  (rules/ + rag/)
-├── 08_deployment/  (deployment_qa_set.html, deployment_qa_set.md)
-├── {company}_api_requirements.md
-├── {company}_alf_implementation_guide.md
-└── pipeline_summary.md
+│   └── alf_setup/  (rules_draft.md, rag_items.md)
+├── 07_alf_documents/
+│   ├── rules/      (01~09_*.md)
+│   └── rag/        (*.md)
+└── {company}_api_requirements.md
 ```
-
-**Generate `pipeline_summary.md`** with execution info, statistics per stage, verification results, key insights, and next steps.
 
 **Communicate results:**
 ```
-✅ Userchat-to-SOP Pipeline Complete: {Company}
+✅ ALF Setup Complete: {Company}
 
 📊 Results
   - Records: {N}, Clusters: {K}
   - Patterns: {P}, FAQ Pairs: {F}
   - SOP Files: {count} (TS: {ts}, HT: {ht})
-  - Verification Coverage: {X}%
-  - Flowcharts: {fc_count}
   - Rules: 9 sections → {rule_files} individual files
   - RAG Items: Priority 1: {p1} / Priority 2: {p2} → {rag_docs} documents
   - Tasks: {task_count} / APIs: {api_count}
-  - 해결율: 보수적 {X}% ~ 낙관적 {Y}%
-  - QA 세트: Step 1 {s1}건 + Step 2 {s2}건
 
 📁 Output: results/{company}/
-📄 Key reports:
-  - {company}_alf_implementation_guide.md (ALF 도입 가이드)
-  - {company}_analysis_report.md (데이터 분석 리포트)
-  - 08_deployment/deployment_qa_set.html (배포 시나리오 & QA 세트)
+🚀 다음 단계:
+  - /settings-rules 로 규칙 업로드
+  - /settings-rag 로 RAG 문서 업로드
+  - /settings-task 로 태스크 업로드
 ```
 
 ---
+
+## Skipped Stages (pipeline-mode)
+
+아래는 이 파이프라인에서 생략됩니다. 필요 시 standalone으로 개별 실행하세요.
+
+| 생략 항목 | Standalone 명령 | 용도 |
+|-----------|----------------|------|
+| Stage 1 analysis_report | `/stage1-clustering` | 클러스터링 분석 요약 |
+| Stage 4 Flowcharts | `/stage4-flowchart-generation` | Mermaid 플로우차트 |
+| Stage 5 교차분석/ROI/보고서 | `/stage5-sop-to-guide` | 영업 보고서 + 데이터 분석 리포트 |
+| Stage 7 배포 시나리오 | `/stage7-deployment-scenario` | 고객사 공유용 QA 세트 |
 
 ## Pipeline Defaults
 
@@ -247,23 +201,6 @@ results/{company}/
 | 2 | min_total_samples | **500** |
 | 2 | n_samples_per_cluster | max(25, ceil(500/K)) |
 | 3 | verification | **enabled** (3-5 conversations per SOP) |
-| 4 | flowchart_target | all |
-| 4 | flowchart_format | markdown |
-| 5 | intermediate_artifacts | generated but not deliverables |
-| 6 | enabled | true (requires Stage 5) |
-| 7 | enabled | true (requires Stage 6) |
-| 7 | notion_parent_page | none (local files only) |
-
-## Pipeline-mode vs Standalone-mode Differences
-
-When running Stage 5 as part of the full pipeline (`/userchat-to-alf-setup`), the following are skipped or demoted:
-
-| Artifact | Pipeline mode | Standalone (`/stage5-sop-to-guide`) |
-|----------|--------------|--------------------------------------|
-| `cross_analysis.json` | Generated (intermediate) | Deliverable |
-| `heatmap.png` | Generated (intermediate) | Deliverable |
-| `automation_analysis.md` | Generated (intermediate) | Deliverable |
-| `sales_report_config.json` | Generated (intermediate) | Deliverable |
 
 ## Troubleshooting
 
@@ -272,19 +209,17 @@ When running Stage 5 as part of the full pipeline (`/userchat-to-alf-setup`), th
 | Stage 1 fails | `pip install -r requirements.txt`, check UPSTAGE_API_KEY |
 | Stage 2 too slow | Reduce `min_total_samples` to 300, or `focus_clusters="top_10"` |
 | SOPs too generic | Stage 3 verification should catch this; if not, increase Stage 2 samples |
-| Stage 5 fails | Check ANTHROPIC_API_KEY (for dialog classification), verify Stage 1-3 outputs exist |
+| Stage 5 fails | Verify Stage 1-3 outputs exist |
 | Stage 6 fails | Verify `rules_draft.md` and `rag_items.md` exist from Stage 5 |
-| Stage 7 fails | Verify `cross_analysis.json`, `rag_items.md`, `api_requirements.md` exist from Stage 5-6 |
-| Need to resume | Each stage runs independently: `/stage2-extraction`, `/stage5-sop-to-guide`, `/stage7-deployment-scenario`, etc. |
-| Flowchart fails | Use `flowchart_format="markdown"` (no CLI needed) |
+| Need full reports | Run `/stage5-sop-to-guide` standalone (all steps enabled) |
+| Need flowcharts | Run `/stage4-flowchart-generation` standalone |
+| Need deployment QA | Run `/stage7-deployment-scenario` standalone |
 
 ## Notes
 
 - **Hybrid approach**: Python for clustering (fast, deterministic), LLM for extraction and composition (language understanding)
 - **Stage 2: sequential processing in main agent** — no subagents (causes hanging)
 - **Stage 3 verification loop** is the key quality improvement — invests tokens in checking rather than elaborate prompts
-- **Stage 5 pipeline mode**: Skips QA scenarios; intermediate analysis files are generated for report input but not listed as deliverables
-- **Stage 6** depends on Stage 5 — if Stage 5 is skipped, Stage 6 is also skipped
-- **Stage 7** depends on Stage 6 — generates client-facing deployment scenario + QA set from existing outputs (~5 min)
-- Cost: ~$2-5 per 1000 records (Upstage + Claude, full pipeline including Stage 5-7)
+- **Pipeline-mode vs Standalone**: This pipeline generates ONLY ALF setup files. For reports/analysis, use `/stage5-sop-to-guide` standalone
+- Cost: ~$1-3 per 1000 records (Upstage + Claude, setup-only pipeline)
 - Each stage is independent and can be resumed separately

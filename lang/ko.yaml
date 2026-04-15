@@ -1,54 +1,66 @@
-# Korean language configuration for clustering pipeline
 tagging:
-  empty_label: "빈_클러스터"
-  empty_category: "기타"
-  empty_keywords: "비어있음, 데이터없음"
-  empty_log: "클러스터 {cluster_id} ({size}건): 샘플 없음 → 건너뜀"
-  conv_block_header: "[상담 {i}]"
+  empty_label: "빈 데이터"
+  empty_category: "시스템"
+  empty_keywords: "empty, 텍스트없음, 자동분류"
+  empty_log: "클러스터 {cluster_id} ({size}건): 빈 데이터 → 자동 분류"
+  source_real: "실제 대화 메시지"
   source_real_short: "실제 대화"
-  source_real: "실제 고객 대화 메시지"
-  source_summary: "상담 요약"
-  label_instruction: "label은 이 클러스터의 핵심 주제를 4-6 단어 한국어로 작성하세요. 예: '배송_지연_문의', 'AS_접수_요청'"
-  default_label: "클러스터_{cluster_id}"
-  default_category: "미분류"
-  cluster_block_header: "### 클러스터 {cluster_id} ({size}건)"
-  agent_fallback_log: "Agent 태깅 실패 ({error}), API 방식으로 전환합니다."
+  source_summary: "요약 텍스트"
+  conv_block_header: "[상담 {i}]"
+  cluster_block_header: "[클러스터 {cluster_id}] (n={size}건)"
+  default_label: "클러스터 {cluster_id}"
+  default_category: "기타"
+  agent_fallback_log: "Agent 태깅 실패 (에러: {error}), API 방식으로 폴백..."
+  label_instruction: "간결한 한글 라벨 (3-8자)"
   api_prompt: |
-    당신은 고객 상담 데이터 분석 전문가입니다.
+    다음은 고객 상담 {source_label}입니다. 이 클러스터를 대표하는 라벨을 생성하세요.
 
-    아래는 하나의 클러스터에 속한 {source_label} {n_samples}건입니다 (전체 {cluster_size}건 중).
+    클러스터 크기: {cluster_size}건
 
+    샘플 ({n_samples}건):
     {sample_text}
 
-    위 상담들의 공통 주제를 분석하여 아래 JSON 형식으로 응답하세요:
+    다음 형식으로 JSON 응답:
     {{
-      "label": "<{label_instruction}>",
-      "category": "<상위 카테고리: 구매상담, 배송, AS, 기술지원, 계정, 결제, 기타 중 택1>",
+      "label": "{label_instruction}",
+      "category": "적절한 카테고리 (자유롭게)",
       "keywords": ["키워드1", "키워드2", "키워드3"]
     }}
-
-    JSON만 출력하세요.
   agent_prompt: |
-    당신은 고객 상담 데이터 분석 전문가입니다.
-
-    아래는 고객 상담 클러스터링 결과입니다. 각 클러스터에 {source_label}이 포함되어 있습니다.
+    다음은 고객 상담 데이터를 클러스터링한 결과입니다. 각 클러스터에는 {source_label}가 포함되어 있습니다.
 
     {all_clusters_text}
 
-    모든 클러스터를 분석하여 아래 JSON 배열 형식으로 응답하세요:
+    당신의 임무:
+    1. 전체 클러스터를 분석하여 이 데이터셋의 특성(업종, 문의 유형)을 파악하세요
+    2. 데이터에 적합한 카테고리 체계를 생성하세요 (5-10개 정도)
+    3. 각 클러스터를 일관되게 분류하세요
+
+    요구사항:
+    - 카테고리는 상호 배타적이고 전체를 포괄해야 함
+    - 클러스터 간 비교하며 일관된 기준으로 분류
+    - "기타"는 최소화 (정말 분류 불가능한 경우만)
+    - 라벨은 간결하게 3-8자
+
+    다음 형식의 JSON 배열로 응답:
     [
       {{
-        "cluster_id": <클러스터 번호>,
-        "cluster_size": <건수>,
-        "label": "<핵심 주제 4-6 단어, 예: 배송_지연_문의>",
-        "category": "<상위 카테고리: 구매상담, 배송, AS, 기술지원, 계정, 결제, 기타 중 택1>",
-        "keywords": "<쉼표 구분 키워드 3-5개>"
+        "cluster_id": 0,
+        "cluster_size": 100,
+        "label": "배송 지연 문의",
+        "category": "배송",
+        "keywords": ["배송", "지연", "조회"]
       }},
       ...
     ]
 
-    주의사항:
-    - 모든 클러스터에 대해 응답하세요
-    - label은 구체적이고 구분 가능하게 작성하세요
-    - category는 반드시 위 목록 중 하나를 선택하세요
-    - JSON 배열만 출력하세요
+    JSON만 출력하세요 (추가 설명 없이).
+
+config:
+  api_key_error: |
+    ❌ UPSTAGE_API_KEY not found!
+
+    또는 직접 설정하려면:
+      1. .env 파일 생성: cp .env.example .env
+      2. .env 파일에 추가: UPSTAGE_API_KEY=up_your_key_here
+      3. API 키 발급: https://console.upstage.ai/
