@@ -31,6 +31,7 @@
 |------|------|
 | `/settings-task` | Task JSON을 채널톡에 업로드 (생성/수정) |
 | `/settings-rag` | RAG 지식 문서를 채널톡에 일괄 업로드 |
+| `/settings-rules` | ALF 규칙을 채널톡에 일괄 업로드 + 활성화 |
 
 ### 유틸리티
 
