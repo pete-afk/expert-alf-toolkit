@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+*.egg-info/
+
+# Environment
+.env
+
+# Data & Results (고객사 데이터)
+data/
+results/
+storage/runs/
+inputs/
+projects/
+cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Playwright
+playwright-report/
+
+# uv
+uv.lock
+
+# ruff
+.ruff_cache/

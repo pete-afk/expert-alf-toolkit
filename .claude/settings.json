@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(rm -r *)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git branch -D*)",
+      "mcp__redash__archive_query",
+      "mcp__redash__delete_visualization",
+      "mcp__langfuse__delete_dataset_item"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git checkout -- *)",
+      "Bash(git restore *)"
+    ]
+  }
+}
