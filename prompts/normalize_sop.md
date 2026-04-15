@@ -23,9 +23,9 @@ be missing — handle gracefully.
 | `<sop_results_dir>/02_extraction/response_strategies.json` | recommended | escalation_triggers, automation_opportunity |
 | `<sop_results_dir>/02_extraction/keywords.json` | optional | taxonomy for intent naming |
 | ALF task JSON (primary path) | recommended | machine-readable task definitions |
-| `<sop_results_dir>/04_tasks/TASK*.md` | fallback | Mermaid flowcharts if task JSON unavailable |
+| `<sop_results_dir>/05_tasks/TASK*.md` | fallback | Mermaid flowcharts if task JSON unavailable |
 
-If both ALF task JSON and `04_tasks/*.md` are present, **prefer the JSON** —
+If both ALF task JSON and `05_tasks/*.md` are present, **prefer the JSON** —
 the Markdown is a human-authored draft and may lag behind the actual ALF
 deployment.
 
@@ -74,7 +74,7 @@ intents:                            # ONE entry per SOP topic in metadata.json
     automation_opportunity: <string> # from response_strategies[topic].automation_opportunity, may be ""
     key_info: [<string>]            # from response_strategies[topic].key_info, may be []
 
-tasks:                              # from ALF task JSON (primary) OR 04_tasks/*.md (fallback)
+tasks:                              # from ALF task JSON (primary) OR 05_tasks/*.md (fallback)
   - id: <string>                    # from JSON `id` field, or filename stem for MD fallback
     name: <string>                  # human-readable name
     triggers: [<string>]            # example user utterances that should fire the task

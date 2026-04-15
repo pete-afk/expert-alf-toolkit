@@ -18,7 +18,7 @@ Usage:
         --sop_dir   results/usimsa/03_sop \\
         --patterns  results/usimsa/02_extraction/patterns.json \\
         --faq       results/usimsa/02_extraction/faq.json \\
-        --output    results/usimsa/05_sales_report/alf_setup
+        --output    results/usimsa/06_sales_report/alf_setup
 """
 
 import re

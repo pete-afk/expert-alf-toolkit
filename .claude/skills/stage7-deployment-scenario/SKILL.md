@@ -40,19 +40,19 @@ Stage 1~6 산출물을 재구조화하여 **고객사 공유용 배포 시나리
 
 **입력 파일:**
 ```
-05_sales_report/analysis/cross_analysis.json  → 카테고리 빈도
-05_sales_report/alf_setup/rag_items.md        → RAG 항목 (Priority 1/2)
+06_sales_report/analysis/cross_analysis.json  → 카테고리 빈도
+06_sales_report/alf_setup/rag_items.md        → RAG 항목 (Priority 1/2)
 {company}_api_requirements.md                 → API 필요/불필요 태스크 분류
-04_tasks/TASK*.md                             → 태스크 정의
+05_tasks/TASK*.md                             → 태스크 정의
 02_extraction/faq.json                        → FAQ Q/A 쌍 (테스트 쿼리 소스)
 03_sop/*.sop.md                               → SOP Case 시나리오 (테스트 쿼리 소스)
-05_sales_report/analysis/automation_analysis.md → 커버리지 수치
+06_sales_report/analysis/automation_analysis.md → 커버리지 수치
 {company}_alf_implementation_guide.md          → ROI 수치
 ```
 
 **산출물:**
 ```
-results/{company}/07_deployment/
+results/{company}/08_deployment/
 ├── deployment_qa_set.html    ← QA 세트 (고객사 공유용, 인라인 CSS)
 ├── deployment_qa_set.md      ← QA 세트 (로컬 보관용 마크다운)
 └── deployment_flow.html      ← 토픽→해결방식→Step 매핑 시각화 (SVG)
@@ -68,7 +68,7 @@ results/{company}/07_deployment/
 - **company**: 회사 식별자 (예: `ppodeuk`, `usimsa_v2`)
 
 ### Optional
-- **output_dir** (default: `results/{company}/07_deployment`): 출력 디렉토리
+- **output_dir** (default: `results/{company}/08_deployment`): 출력 디렉토리
 - **notion_parent_page** (default: none): Notion 부모 페이지 URL/ID. 제공 시 Notion에 퍼블리싱.
 
 ---
@@ -78,13 +78,13 @@ results/{company}/07_deployment/
 ### 1. Validate Input Files
 
 **Actions:**
-1. Scan `results/` for company directories containing `05_sales_report/analysis/cross_analysis.json`
+1. Scan `results/` for company directories containing `06_sales_report/analysis/cross_analysis.json`
 2. Use `AskUserQuestion` to confirm target company
 3. Verify all input files exist:
    - `cross_analysis.json` (REQUIRED)
    - `rag_items.md` (REQUIRED)
    - `{company}_api_requirements.md` (REQUIRED)
-   - `04_tasks/TASK*.md` (REQUIRED, at least 0 — some companies may have no tasks)
+   - `05_tasks/TASK*.md` (REQUIRED, at least 0 — some companies may have no tasks)
    - `02_extraction/faq.json` (REQUIRED — for test queries)
    - `03_sop/*.sop.md` (REQUIRED — for test queries)
    - `automation_analysis.md` (optional — for coverage figures)
@@ -120,7 +120,7 @@ Read the source files and build the master mapping of categories to resolution m
    - Read `api_requirements.md`:
      - Section 3 "API 불필요 태스크" → **RAG** (knowledge response only) or **RAG + 상담사** (if listed as requiring agent handling)
      - Section 1 "API 필요 태스크" → **Task (API)**
-   - Read `04_tasks/TASK*.md` file list:
+   - Read `05_tasks/TASK*.md` file list:
      - Topics with a TASK file → **Task**
      - Check each TASK: if it has API call nodes (dashed orange border in Mermaid, or listed in api_requirements Section 1) → **Task (API)** = Step 2
      - If TASK has NO API calls → **Task (단순)** = Step 1
@@ -191,7 +191,7 @@ For each **flow** (not just category) in the mapping table, generate 1-2 test qu
    - **고객사 확인 필요**: What needs to be agreed with the client (e.g., defect judgment criteria, refund authority)
 
 **For Step 2 flows (Task API):**
-1. Read the corresponding `04_tasks/TASK*.md` — extract the trigger scenario
+1. Read the corresponding `05_tasks/TASK*.md` — extract the trigger scenario
 2. Read the corresponding `03_sop/*.sop.md` — extract Case 1 customer scenario
 3. Format as:
    - **구체적 쿼리**: Realistic customer request that triggers this task
@@ -320,7 +320,7 @@ Generate a standalone HTML file with an inline SVG chart showing the 3-column fl
 - Same CSS conventions as 4-B (font stack, background, print styles)
 - Legend at bottom explaining colors
 
-**Reference**: Use `results/오아/07_deployment/deployment_flow.html` as the structural reference. Adapt the data (topic names, counts, flow mappings) from the category mapping table built in Step 2.
+**Reference**: Use `results/오아/08_deployment/deployment_flow.html` as the structural reference. Adapt the data (topic names, counts, flow mappings) from the category mapping table built in Step 2.
 
 ---
 
@@ -381,9 +381,9 @@ Generate a standalone HTML file with an inline SVG chart showing the 3-column fl
 ✅ Stage 7 완료 — 배포 시나리오 & QA 세트
 
 📁 Output:
-  - results/{company}/07_deployment/deployment_qa_set.md
-  - results/{company}/07_deployment/deployment_flow.html
-  - results/{company}/07_deployment/deployment_qa_set.html
+  - results/{company}/08_deployment/deployment_qa_set.md
+  - results/{company}/08_deployment/deployment_flow.html
+  - results/{company}/08_deployment/deployment_qa_set.html
   {- Notion: {page_url} (있는 경우)}
 
 📊 요약:

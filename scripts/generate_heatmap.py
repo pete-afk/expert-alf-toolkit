@@ -8,8 +8,8 @@ cross_analysis.json 포맷에 맞게 동작하며 한글 폰트를 자동 탐지
 
 Usage:
     python3 scripts/generate_heatmap.py \\
-        --input  results/{company}/05_sales_report/analysis/cross_analysis.json \\
-        --output results/{company}/05_sales_report/analysis/heatmap.png \\
+        --input  results/{company}/06_sales_report/analysis/cross_analysis.json \\
+        --output results/{company}/06_sales_report/analysis/heatmap.png \\
         [--top_n 15]          # 상위 N개 클러스터만 표시 (기본값: 15)
         [--font "NanumGothic"] # 폰트 강제 지정 (선택)
 """

@@ -7,12 +7,12 @@ Config JSON 파일을 읽어 수치를 일관성 있게 계산하고
 
 Usage:
     python3 scripts/generate_sales_report.py \\
-        --config results/assacom/05_sales_report/sales_report_config.json
+        --config results/assacom/06_sales_report/sales_report_config.json
 
     # 출력 경로 지정
     python3 scripts/generate_sales_report.py \\
-        --config results/assacom/05_sales_report/sales_report_config.json \\
-        --output results/assacom/05_sales_report/assacom_sales_report_v8.md
+        --config results/assacom/06_sales_report/sales_report_config.json \\
+        --output results/assacom/06_sales_report/assacom_sales_report_v8.md
 """
 
 import json

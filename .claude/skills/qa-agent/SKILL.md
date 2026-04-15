@@ -37,7 +37,7 @@ Out of scope (route to a different tool):
 | `channel_url` | ask the user; example: `https://vqnol.channel.io` |
 | `sop_results_dir` | ask the user; example: `~/sop-agent/results/<client>/` |
 | `is_competitor_bot` | ask: "현재 경쟁사 봇(GL 등)이 작동 중인 고객사인가요?" — 경쟁사 비교 리포트 여부 결정 |
-| `alf_task_json_path` | optional; ask "ALF 태스크 JSON 있으세요?" — if not, fallback to `<sop_results_dir>/04_tasks/*.md` |
+| `alf_task_json_path` | optional; ask "ALF 태스크 JSON 있으세요?" — if not, fallback to `<sop_results_dir>/05_tasks/*.md` |
 | `target_total` | optional; default **25** |
 | `headed` | optional; default **false** (headless). Use `true` only for debugging. |
 

@@ -15,7 +15,7 @@ Markdown 문서 디렉토리를 채널톡 Document API에 일괄 업로드합니
 
 | 위치 | 이름 | 필수 | 설명 | 기본값 |
 |------|------|------|------|--------|
-| `$0` | `docs_dir` | O | Markdown 문서 디렉토리 경로 (Stage 6 산출물: `06_rag_documents/`) | — |
+| `$0` | `docs_dir` | O | Markdown 문서 디렉토리 경로 (Stage 6 산출물: `07_alf_documents/rag/`) | — |
 | `$1` | `channelId` | O | 채널 ID | — |
 | `$2` | `spaceId` | O | Document Space ID | — |
 | `$3` | `xAccount` | O | 인증 토큰 (`x-account`) | — |

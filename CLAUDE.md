@@ -9,7 +9,7 @@
 
 | 스킬 | 설명 |
 |------|------|
-| `/userchat-to-sop-pipeline` | 전체 파이프라인 자동 실행 (Stage 1-7) |
+| `/userchat-to-alf-setup` | 전체 파이프라인 자동 실행 (Stage 1-7) |
 | `/stage1-clustering` | 상담 데이터 클러스터링 + 태깅 |
 | `/stage2-extraction` | 패턴 추출 + FAQ 생성 |
 | `/stage3-sop-generation` | SOP 문서 생성 |

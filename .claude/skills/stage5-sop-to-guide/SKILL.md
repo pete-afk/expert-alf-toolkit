@@ -1,6 +1,6 @@
 ---
 name: stage5-sop-to-guide
-description: Generate an ALF implementation package from all pipeline outputs. Produces rules draft, RAG knowledge items, dialog type cross-analysis heatmap, automation feasibility analysis, ROI calculation, task flowcharts (04_tasks/), API requirements doc, and final ALF implementation guide. **Language:** Auto-detects Korean (한국어) or Japanese (日本語) from user input.
+description: Generate an ALF implementation package from all pipeline outputs. Produces rules draft, RAG knowledge items, dialog type cross-analysis heatmap, automation feasibility analysis, ROI calculation, task flowcharts (05_tasks/), API requirements doc, and final ALF implementation guide. **Language:** Auto-detects Korean (한국어) or Japanese (日本語) from user input.
 ---
 
 # Stage 5: ALF 구축 패키지 생성
@@ -42,7 +42,7 @@ Step 4: Python — ROI 계산
     → sales_report_config.json + ROI 수치
     ↓
 Step 5: LLM — 태스크 정의 + API 요건 정의서
-    → 04_tasks/TASK{N}_{이름}.md   (태스크별 Mermaid 플로우차트 + 요약표)
+    → 05_tasks/TASK{N}_{이름}.md   (태스크별 Mermaid 플로우차트 + 요약표)
     → {company}_api_requirements.md  (개발팀용 API 요건 정의서)
     ↓
 Step 6: LLM — 최종 통합 보고서 (ALF 도입 가이드)
@@ -55,12 +55,12 @@ Step 7: LLM — 최종 분석 리포트 (Rosa 프레임워크)
 **산출물 디렉토리:**
 ```
 results/{company}/
-├── 04_tasks/                              ← (Stage 5에서 생성)
+├── 05_tasks/                              ← (Stage 5에서 생성)
 │   ├── TASK{N}_{이름}.md                  ← 태스크별 Mermaid 플로우차트 + 요약표
 │   └── TASK{N}_{이름}.svg                 ← (선택, mmdc 설치 시)
 ├── {company}_api_requirements.md          ← API 요건 정의서 (개발팀용)
 ├── {company}_alf_implementation_guide.md  ← 최종 ALF 도입 가이드
-└── 05_sales_report/
+└── 06_sales_report/
     ├── alf_setup/
     │   ├── rules_draft.md          ← 규칙 초안 (시스템 프롬프트)
     │   └── rag_items.md            ← RAG 지식 DB 등록 항목
@@ -88,7 +88,7 @@ results/{company}/
 - **alf_chat_cost** (기본값: `500`): ALF 채팅 참여 비용 (원/건)
 - **alf_task_cost** (기본값: `200`): ALF 태스크 실행 비용 (원/건)
 - **phase2_min_krw** / **phase2_max_krw**: Phase 2 외주 개발비 범위 (원)
-- **output_dir** (기본값: `results/{company}/05_sales_report`): 출력 디렉토리
+- **output_dir** (기본값: `results/{company}/06_sales_report`): 출력 디렉토리
 
 ---
 
@@ -143,7 +143,7 @@ results/{company}/
   - Hourly wage: 15,100원 (기본값)
   - Handling time: 8분 (기본값)
   - Phase 2 dev cost: 100~300만원
-  - Output: results/kmong_v2/05_sales_report/
+  - Output: results/kmong_v2/06_sales_report/
 ```
 
 ---
@@ -157,7 +157,7 @@ python3 scripts/extract_alf_setup_data.py \
     --sop_dir   results/{company}/03_sop \
     --patterns  results/{company}/02_extraction/patterns.json \
     --faq       results/{company}/02_extraction/faq.json \
-    --output    results/{company}/05_sales_report/alf_setup
+    --output    results/{company}/06_sales_report/alf_setup
 ```
 
 Produces `alf_setup/alf_setup_data.json` containing:
@@ -176,6 +176,36 @@ Read `alf_setup/alf_setup_data.json` (single structured file) to produce two out
 **No hallucination**: Only include content explicitly stated in the SOPs.
 
 **Reference**: Fetch the ALF 규칙 레퍼런스 Notion page (`https://www.notion.so/channelio/2af74b55ec7c80db947edb39c2d59f96`) using the `mcp__claude_ai_Notion__notion-fetch` tool. This page contains best-practice rule examples and detailed condition values (상담원 연결 조건, 공감 표현, 이슈 응대, 지식 참조 원칙 등) that MUST be used to fill in the detailed condition values of each section. The SOP data provides the company-specific content; the Notion reference provides the structural depth and condition logic.
+
+**금칙 작성 지침 적용** (`금칙 설정 작성 지침.md` 기반):
+
+Transformer Attention 특성상 부정어("~하지 마시오")는 금지 대상 토큰에 가중치가 쏠려 역효과가 발생합니다. 아래 적용 전략을 반드시 준수합니다.
+
+| 적용 강도 | 대상 | 적용 원칙 |
+|-----------|------|-----------|
+| **Light** | 섹션 1~8 (영역별 규칙) | 원칙 1 (긍정 지시어 치환) + 원칙 2 (If-Then 규칙) |
+| **Full** | 섹션 9 (필수 응대 규칙 — 마스터) | 원칙 1 + 2 + 3 (마크다운 격리) + 4 (CoT 검열) + 5 (Fallback 방어) |
+
+**[원칙 1: 긍정 지시어 치환]** — 섹션 1~9 전체 적용
+- 모든 부정문을 긍정문으로 치환: "~하지 않음" → "~한다", "금지" → "준수 사항"
+- 섹션 헤더도 긍정형: "주의사항"/"금칙사항" → "필수 응대 규칙"/"준수 사항"
+- 예: "추측하지 않는다" → "등록된 지식의 내용만을 근거로 답변한다"
+
+**[원칙 2: If-Then 규칙]** — 섹션 1~9 전체 적용
+- 각 규칙에 트리거 조건과 출력할 정확한 텍스트를 명시
+- 예: "모르는 내용을 지어내지 마세요" → "검색된 문서에 답이 없다면, '확인 후 안내드리겠습니다'라고 응답한다"
+- 트리거 조건은 동의어/유사 표현까지 확장: "환불 일자" → "환불 일자/시점/소요 기간/반영 시기"
+
+**[원칙 3: 마크다운 격리]** — 섹션 9에만 적용
+- 블록 인용(`>`) + 구분선(`---`)으로 제약 조건을 구조적으로 격리
+
+**[원칙 4: CoT 검열]** — 섹션 9 끝에 1회 배치
+- 최종 답변 전 자가 검증 문구: "최종 답변을 생성하기 전, '필수 응대 규칙' 섹션의 규칙을 위반하지 않았는지 내부적으로 검증하세요."
+
+**[원칙 5: 3계층 Fallback 방어]** — 섹션 9에 배치
+- Tier 1: 지정 규칙 (R-1 ~ R-N) — 트리거 매칭 시 hardcoded 응답
+- Tier 2: 일반 규칙 + RAG 종합 판단 — Tier 1 미매칭 시
+- Tier 3: 에스컬레이션 — 명시적 실패 조건 리스트로 상담원 인계
 
 Include all of the following sections:
 
@@ -199,19 +229,24 @@ Include all of the following sections:
    - **응대 플로우**: 오류 화면 요청 → RAG 확인 → 기능 확인 → 원인 분류 (기존 동작 장애 vs 신규 설정 문제) → 상담원 연결 조건
    - Reference the Notion page 이슈문의응대 for the complete flow structure
 
-5. **지식 참조 원칙** — 6 principles:
-   - 등록된 지식만 참조, 추측 절대 금지, 경쟁사 언급 금지, URL 검증, AI 메타 표현 금지, 안내 불가 시 대응
-   - Include ❌/✅ 예시 pairs for each principle
+5. **지식 참조 원칙** — 6 principles (긍정문 기반):
+   - 등록된 지식만 근거로 답변, 근거 없으면 "확인 후 안내" 응답, 자사 서비스 정보만 안내, 공식 URL만 제공, 자연스러운 표현 사용, 가능 여부와 대안을 명확히 안내
+   - Include If-Then pairs: 트리거 조건 → 출력할 정확한 텍스트
    - Reference the Notion page 지식 참조 예시 for the exact patterns
 
 6. **피드백 수집 규칙** — (SOP에서 피드백/건의 관련 패턴이 발견된 경우):
-   - 트리거 조건, 응대 흐름 (공감 → 현황 → 접수 유도 → 배경 요청), 유의사항
+   - 트리거 조건, 응대 흐름 (공감 → 현황 → 접수 유도 → 배경 요청), 준수 사항
 
 7. **반복 질문 대응** — 횟수별 대응 (1회 상세 → 2회 요약 → 3회+ 상담원 고려)
 
 8. **고객사별 특수 규칙** — SOP에서 해당 고객사에만 적용되는 특수 규칙 (예: 가격 개편 응대, 특정 프로모션 등)
 
-9. **Non-automatable situations** — extracted from flowchart 🔴 escalation cases
+9. **필수 응대 규칙 (마스터)** — 모든 영역에 공통 적용되는 제약 사항을 중앙 집중 관리. Full 적용 (원칙 1~5 모두):
+   - **지정 규칙 (R-1 ~ R-N)**: 섹션 1~8에서 추출한 핵심 제약을 긍정문 + If-Then 형태로 통합 정리
+   - **Non-automatable situations**: flowchart 🔴 escalation cases (기존 섹션 9 내용)
+   - **3계층 Fallback 방어**: Tier 1 (지정 규칙) → Tier 2 (일반 규칙 + RAG) → Tier 3 (에스컬레이션, 명시적 실패 조건 리스트)
+   - **CoT 자가 검증 문구**: 섹션 최하단에 배치
+   - 블록 인용(`>`) + 구분선(`---`)으로 구조적 격리
 
 **Output format**: `templates/ALF_RULES_DRAFT_template.md` 구조를 따릅니다.
 
@@ -261,7 +296,7 @@ python3 scripts/analyze_dialogs.py \
     --messages results/{company}/01_clustering/{company}_messages.csv \
     --tags     results/{company}/01_clustering/{company}_tags.xlsx \
     --patterns results/{company}/02_extraction/patterns.json \
-    --output   results/{company}/05_sales_report/analysis
+    --output   results/{company}/06_sales_report/analysis
 ```
 
 > `--patterns` 옵션은 Stage 2의 `sop_topic_map`을 읽어 히트맵 Y축을 **Stage 1 클러스터가 아닌 Stage 2 재분류 토픽** 기준으로 집계합니다. 생략 시 Stage 1 클러스터 기준으로 동작합니다.
@@ -370,7 +405,7 @@ Compile results from Step 2 (SOP analysis) and Step 3 (automation analysis) into
 
 ```bash
 python3 scripts/generate_sales_report.py \
-    --config results/{company}/05_sales_report/sales_report_config.json
+    --config results/{company}/06_sales_report/sales_report_config.json
 ```
 
 **Constraints:**
@@ -390,7 +425,7 @@ python3 scripts/generate_sales_report.py \
 
 Based on the SOP and automation_analysis.md analysis results, generate two documents.
 
-#### 5-A. 04_tasks/ — Task Flowchart Files
+#### 5-A. 05_tasks/ — Task Flowchart Files
 
 Separate scenarios that include API calls into individual task files, one file per task.
 
@@ -403,7 +438,7 @@ Separate scenarios that include API calls into individual task files, one file p
 
 SVG 생성 (mmdc 설치 시):
 ```bash
-mmdc -i results/{company}/04_tasks/TASK{N}_{이름}.md -o results/{company}/04_tasks/TASK{N}_{이름}.svg -b transparent
+mmdc -i results/{company}/05_tasks/TASK{N}_{이름}.md -o results/{company}/05_tasks/TASK{N}_{이름}.svg -b transparent
 ```
 
 #### 5-B. {company}_api_requirements.md — API Requirements Document
@@ -426,7 +461,7 @@ Define the APIs used in tasks so that the development team can review them.
 **Expected Output:**
 ```
 ✅ Step 5 complete
-  - 04_tasks/: TASK 파일 {X}개 생성
+  - 05_tasks/: TASK 파일 {X}개 생성
   - {company}_api_requirements.md: 필수 API {X}개 / 선택 API {X}개
 ```
 
@@ -440,7 +475,7 @@ Compose `{company}_alf_implementation_guide.md` using all outputs.
 - `rules_draft.md`, `rag_items.md` (Step 2)
 - `cross_analysis.json`, `heatmap.png`, `automation_analysis.md` (Step 3)
 - ROI figures from Step 4 script output
-- `04_tasks/*.md`, `{company}_api_requirements.md` (Step 5)
+- `05_tasks/*.md`, `{company}_api_requirements.md` (Step 5)
 
 **Report sections:**
 
@@ -524,7 +559,7 @@ ALF 패키지(`_alf_package.md`)가 영업/배포 중심이라면, 이 보고서
 **Expected Output:**
 ```
 ✅ Analysis report complete
-  - File: results/{company}/05_sales_report/{company}_analysis_report.md
+  - File: results/{company}/06_sales_report/{company}_analysis_report.md
   - Sections: 8
   - 데이터 미제공 필드: X개 (운영 현황 일부 등)
 ```

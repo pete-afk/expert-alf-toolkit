@@ -34,7 +34,7 @@ claude
 ### SOP 파이프라인 (상담 데이터 -> ALF 설정)
 
 ```
-> /userchat-to-sop-pipeline
+> /userchat-to-alf-setup
 ```
 
 전체 파이프라인을 자동 실행합니다. 개별 단계도 실행 가능:
@@ -61,7 +61,7 @@ SOP 분석 결과 + 테스트 채널 URL로 자동 QA를 실행합니다.
 
 ```
 > /settings-task task.json 채널ID x-account
-> /settings-rag results/회사/06_rag_documents/ 채널ID 스페이스ID x-account
+> /settings-rag results/회사/07_alf_documents/rag/ 채널ID 스페이스ID x-account
 ```
 
 ## 산출물
@@ -71,10 +71,10 @@ results/{회사명}/
 ├── 01_clustering/      # 클러스터링 결과
 ├── 02_extraction/      # 패턴 + FAQ
 ├── 03_sop/             # SOP 문서
-├── 04_tasks/           # Task 정의
-├── 05_sales_report/    # ALF 패키지 (규칙, RAG, 분석)
-├── 06_rag_documents/   # 개별 RAG 지식 문서
-└── 07_deployment/      # 배포 시나리오 + QA 세트
+├── 05_tasks/           # Task 정의
+├── 06_sales_report/    # ALF 패키지 (규칙, RAG, 분석)
+├── 07_alf_documents/   # 개별 규칙 + RAG 지식 문서
+└── 08_deployment/      # 배포 시나리오 + QA 세트
 
 storage/runs/{run-id}/  # QA 테스트 결과
 ├── scenarios.json      # 테스트 시나리오

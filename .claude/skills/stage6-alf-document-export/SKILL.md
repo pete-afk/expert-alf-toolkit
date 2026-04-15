@@ -16,8 +16,8 @@ Stage 5에서 생성된 `rules_draft.md`(규칙 초안)와 `rag_items.md`(RAG �
 
 **입력 파일:**
 ```
-05_sales_report/alf_setup/rules_draft.md   → 규칙 초안 (9개 섹션)
-05_sales_report/alf_setup/rag_items.md     → RAG 지식 항목 목록
+06_sales_report/alf_setup/rules_draft.md   → 규칙 초안 (9개 섹션)
+06_sales_report/alf_setup/rag_items.md     → RAG 지식 항목 목록
 03_sop/*.sop.md                            → 원본 SOP (RAG 문서 확장 참조)
 02_extraction/faq.json                     → FAQ 원본 데이터 (RAG 문서 확장 참조)
 ```
@@ -25,21 +25,21 @@ Stage 5에서 생성된 `rules_draft.md`(규칙 초안)와 `rag_items.md`(RAG �
 **산출물:**
 ```
 results/{company}/
-├── 05_sales_report/alf_setup/
-│   └── rules/                         ← 개별 규칙 파일 (신규)
-│       ├── 01_tone_manner.md
-│       ├── 02_empathy_rules.md
-│       ├── 03_escalation_conditions.md
-│       ├── 04_issue_response_flow.md
-│       ├── 05_knowledge_reference.md
-│       ├── 06_feedback_collection.md
-│       ├── 07_repeated_question.md
-│       ├── 08_special_rules.md
-│       └── 09_non_automatable.md
-└── 06_rag_documents/                  ← 개별 RAG 지식 문서 (신규)
-    ├── {토픽1_한글명}.md
-    ├── {토픽2_한글명}.md
-    └── ...
+└── 07_alf_documents/
+    ├── rules/                         ← 개별 규칙 파일 (신규)
+    │   ├── 01_tone_manner.md
+    │   ├── 02_empathy_rules.md
+    │   ├── 03_escalation_conditions.md
+    │   ├── 04_issue_response_flow.md
+    │   ├── 05_knowledge_reference.md
+    │   ├── 06_feedback_collection.md
+    │   ├── 07_repeated_question.md
+    │   ├── 08_special_rules.md
+    │   └── 09_non_automatable.md
+    └── rag/                           ← 개별 RAG 지식 문서 (신규)
+        ├── {토픽1_한글명}.md
+        ├── {토픽2_한글명}.md
+        └── ...
 ```
 
 ---
@@ -59,11 +59,11 @@ results/{company}/
 ### 1. Validate Input Files
 
 **Actions:**
-1. Scan `results/` for company directories containing `05_sales_report/alf_setup/rules_draft.md`
+1. Scan `results/` for company directories containing `06_sales_report/alf_setup/rules_draft.md`
 2. Use `AskUserQuestion` to confirm the target company
 3. Verify all input files exist:
-   - `results/{company}/05_sales_report/alf_setup/rules_draft.md`
-   - `results/{company}/05_sales_report/alf_setup/rag_items.md`
+   - `results/{company}/06_sales_report/alf_setup/rules_draft.md`
+   - `results/{company}/06_sales_report/alf_setup/rag_items.md`
    - `results/{company}/03_sop/` (at least 1 `.sop.md` file)
    - `results/{company}/02_extraction/faq.json`
 
@@ -86,7 +86,7 @@ results/{company}/
 
 **Actions:**
 1. Read `rules_draft.md` and identify all top-level sections (`## 1.` through `## 9.`)
-2. Create `results/{company}/05_sales_report/alf_setup/rules/` directory
+2. Create `results/{company}/07_alf_documents/rules/` directory
 3. For each section, extract the full content (including all sub-sections) and write to an individual file
 
 **File naming convention:**
@@ -134,7 +134,7 @@ results/{company}/
 **Actions:**
 1. Read `rag_items.md` and parse each knowledge item (Priority 1 + Priority 2)
 2. For each item, read the relevant SOP files and FAQ entries referenced in `rag_items.md`
-3. Write an expanded knowledge document for each item to `results/{company}/06_rag_documents/`
+3. Write an expanded knowledge document for each item to `results/{company}/07_alf_documents/rag/`
 
 **File naming:** Use the Korean topic name with underscores (e.g., `세금계산서_수수료_구조_안내.md`)
 
@@ -195,7 +195,7 @@ After generating all files, perform a systematic verification.
 **4-A. Completeness Check (누락 검증)**
 
 1. **규칙 파일**: Compare section count in `rules_draft.md` vs generated file count in `rules/`
-2. **RAG 문서**: Compare item count in `rag_items.md` vs generated file count in `06_rag_documents/`
+2. **RAG 문서**: Compare item count in `rag_items.md` vs generated file count in `07_alf_documents/rag/`
 3. List any gaps found
 
 **4-B. Content Quality Check (품질 검증)**
@@ -243,15 +243,15 @@ After user approval, present the final summary:
 ```
 ✅ Stage 6 완료 — ALF 문서 개별 파일 분리
 
-[규칙 파일] results/{company}/05_sales_report/alf_setup/rules/
+[규칙 파일] results/{company}/07_alf_documents/rules/
   {파일 목록}
 
-[RAG 지식 문서] results/{company}/06_rag_documents/
+[RAG 지식 문서] results/{company}/07_alf_documents/rag/
   {파일 목록}
 
 [다음 단계]
-  1. rules/ 파일 → ALF 시스템 프롬프트에 규칙별로 등록
-  2. 06_rag_documents/ 파일 → ALF RAG 지식 DB에 등록
+  1. 07_alf_documents/rules/ 파일 → ALF 시스템 프롬프트에 규칙별로 등록
+  2. 07_alf_documents/rag/ 파일 → ALF RAG 지식 DB에 등록
   3. 고객사 추가 권장 항목 {X}건 → 클라이언트에게 작성 요청
 ```
 

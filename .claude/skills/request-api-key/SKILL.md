@@ -73,14 +73,14 @@ Pete may reply in the thread or directly in the group — check both.
 
 **Constraints:**
 - You MUST run: `python3 -c "import sys; sys.path.insert(0, '.'); from scripts.config import UPSTAGE_API_KEY; print('OK')"`
-- If OK → inform the user setup is complete, suggest `/stage1-clustering` or `/userchat-to-sop-pipeline`
+- If OK → inform the user setup is complete, suggest `/stage1-clustering` or `/userchat-to-alf-setup`
 - If fails → tell user to restart Claude Code
 
 **Expected Output:**
 ```
 🎉 API 키 설정 완료! (up_xxxxx...)
    이제 파이프라인을 실행할 수 있습니다.
-   👉 /stage1-clustering  또는  /userchat-to-sop-pipeline
+   👉 /stage1-clustering  또는  /userchat-to-alf-setup
 ```
 
 ## Troubleshooting

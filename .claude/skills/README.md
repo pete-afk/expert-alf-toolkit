@@ -9,5 +9,5 @@
 - `stage3-sop-generation/` - Stage 3: SOP 생성
 - `stage4-flowchart-generation/` - Stage 4: 플로우차트 생성
 - `stage5-sales-report/` - Stage 5: 영업 보고서 생성
-- `userchat-to-sop-pipeline/` - 전체 파이프라인
+- `userchat-to-alf-setup/` - 전체 파이프라인
 - `chatbot-rules-generation/` - 챗봇 규칙 생성

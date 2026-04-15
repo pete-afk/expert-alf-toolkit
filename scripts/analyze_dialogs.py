@@ -29,13 +29,13 @@ Usage:
     python3 scripts/analyze_dialogs.py \\
         --messages results/usimsa/01_clustering/usimsa_messages.csv \\
         --tags     results/usimsa/01_clustering/usimsa_tags.xlsx \\
-        --output   results/usimsa/05_sales_report
+        --output   results/usimsa/06_sales_report
 
     # 병렬 처리 수 조정 (기본 5)
     python3 scripts/analyze_dialogs.py \\
         --messages results/usimsa/01_clustering/usimsa_messages.csv \\
         --tags     results/usimsa/01_clustering/usimsa_tags.xlsx \\
-        --output   results/usimsa/05_sales_report \\
+        --output   results/usimsa/06_sales_report \\
         --workers 3
 """
 

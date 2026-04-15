@@ -1,9 +1,9 @@
 ---
-name: userchat-to-sop-pipeline
+name: userchat-to-alf-setup
 description: Complete end-to-end pipeline for transforming Excel customer support data into production-ready Agent SOP documents, flowcharts, ALF implementation package, individual ALF registration files, and client-facing deployment scenario through 7 stages.
 ---
 
-# Userchat-to-SOP Complete Pipeline
+# Userchat-to-ALF-Setup Complete Pipeline
 
 ## Overview
 
@@ -32,7 +32,7 @@ Stage 5: ALF Implementation Package (LLM + Python) [~25 min]
       alf_implementation_guide.md, analysis_report.md
     ↓
 Stage 6: ALF Document Export (LLM) [~10 min]
-    → rules/ (individual rule files), 06_rag_documents/ (individual RAG docs)
+    → 07_alf_documents/rules/ (individual rule files), 07_alf_documents/rag/ (individual RAG docs)
     ↓
 Stage 7: Deployment Scenario (LLM) [~5 min]
     → deployment_qa_set.html, deployment_qa_set.md (+ optional Notion)
@@ -144,18 +144,18 @@ Run `/stage5-sop-to-guide` with the following **pipeline-mode overrides**:
 **Note:** Steps 3-A (cross_analysis + heatmap) and 3-B (automation_analysis) run as **intermediate inputs** for Steps 6-7, but are NOT listed as pipeline deliverables.
 
 **Pipeline deliverables (final outputs):**
-- `results/{company}/05_sales_report/alf_setup/rules_draft.md`
-- `results/{company}/05_sales_report/alf_setup/rag_items.md`
-- `results/{company}/04_tasks/TASK{N}_{name}.md`
+- `results/{company}/06_sales_report/alf_setup/rules_draft.md`
+- `results/{company}/06_sales_report/alf_setup/rag_items.md`
+- `results/{company}/05_tasks/TASK{N}_{name}.md`
 - `results/{company}/{company}_api_requirements.md`
 - `results/{company}/{company}_alf_implementation_guide.md`
-- `results/{company}/05_sales_report/{company}_analysis_report.md`
+- `results/{company}/06_sales_report/{company}_analysis_report.md`
 
 **Intermediate files (generated but not deliverables):**
-- `05_sales_report/analysis/cross_analysis.json`
-- `05_sales_report/analysis/heatmap.png`
-- `05_sales_report/analysis/automation_analysis.md`
-- `05_sales_report/sales_report_config.json`
+- `06_sales_report/analysis/cross_analysis.json`
+- `06_sales_report/analysis/heatmap.png`
+- `06_sales_report/analysis/automation_analysis.md`
+- `06_sales_report/sales_report_config.json`
 
 **Quality Checks:** Rules draft has 9 sections, RAG items have Priority 1+2, ROI figures generated
 
@@ -170,8 +170,8 @@ Run `/stage6-alf-document-export`.
 **Skip if:** `generate_alf_export=false` or Stage 5 was skipped.
 
 **Outputs:**
-- `results/{company}/05_sales_report/alf_setup/rules/01~09_*.md` (9 individual rule files)
-- `results/{company}/06_rag_documents/*.md` (individual RAG knowledge documents)
+- `results/{company}/07_alf_documents/rules/01~09_*.md` (9 individual rule files)
+- `results/{company}/07_alf_documents/rag/*.md` (individual RAG knowledge documents)
 
 **Quality Checks:** Rule file count matches sections, RAG doc count matches rag_items
 
@@ -184,8 +184,8 @@ Run `/stage7-deployment-scenario`.
 **Skip if:** `generate_deployment_scenario=false` or Stage 6 was skipped.
 
 **Outputs:**
-- `results/{company}/07_deployment/deployment_qa_set.html` (고객사 공유용)
-- `results/{company}/07_deployment/deployment_qa_set.md` (로컬 보관용)
+- `results/{company}/08_deployment/deployment_qa_set.html` (고객사 공유용)
+- `results/{company}/08_deployment/deployment_qa_set.md` (로컬 보관용)
 - Notion pages (if `notion_parent_page` provided)
 
 **Quality Checks:** All categories mapped, each has test queries, Step 1/2 classification consistent with api_requirements
@@ -200,12 +200,12 @@ results/{company}/
 ├── 01_clustering/  (clustered.xlsx, tags.xlsx, messages.csv, analysis_report.md)
 ├── 02_extraction/  (patterns.json, faq.json, keywords.json, patterns_enriched.json)
 ├── 03_sop/         (HT_*.sop.md, TS_*.sop.md, metadata.json, *_FLOWCHART.md)
-├── 04_tasks/       (TASK{N}_{name}.md)
-├── 05_sales_report/
-│   ├── alf_setup/  (rules_draft.md, rag_items.md, rules/)
+├── 05_tasks/       (TASK{N}_{name}.md)
+├── 06_sales_report/
+│   ├── alf_setup/  (rules_draft.md, rag_items.md)
 │   └── {company}_analysis_report.md
-├── 06_rag_documents/  (individual RAG docs)
-├── 07_deployment/  (deployment_qa_set.html, deployment_qa_set.md)
+├── 07_alf_documents/  (rules/ + rag/)
+├── 08_deployment/  (deployment_qa_set.html, deployment_qa_set.md)
 ├── {company}_api_requirements.md
 ├── {company}_alf_implementation_guide.md
 └── pipeline_summary.md
@@ -233,7 +233,7 @@ results/{company}/
 📄 Key reports:
   - {company}_alf_implementation_guide.md (ALF 도입 가이드)
   - {company}_analysis_report.md (데이터 분석 리포트)
-  - 07_deployment/deployment_qa_set.html (배포 시나리오 & QA 세트)
+  - 08_deployment/deployment_qa_set.html (배포 시나리오 & QA 세트)
 ```
 
 ---
@@ -256,7 +256,7 @@ results/{company}/
 
 ## Pipeline-mode vs Standalone-mode Differences
 
-When running Stage 5 as part of the full pipeline (`/userchat-to-sop-pipeline`), the following are skipped or demoted:
+When running Stage 5 as part of the full pipeline (`/userchat-to-alf-setup`), the following are skipped or demoted:
 
 | Artifact | Pipeline mode | Standalone (`/stage5-sop-to-guide`) |
 |----------|--------------|--------------------------------------|

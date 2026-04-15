@@ -343,7 +343,7 @@ target_sops: all
 
 - **Flowchart Template** ⭐: [FLOWCHART_template.md](../../../templates/FLOWCHART_template.md) — MUST use this template as the basis for all flowchart generation
 - **Stage 3 SOP Generation**: [stage3-sop-generation.sop.md](../../../agent-sops/stage3-sop-generation.sop.md)
-- **Full Pipeline**: [userchat-to-sop-pipeline.sop.md](../../../agent-sops/userchat-to-sop-pipeline.sop.md)
+- **Full Pipeline**: [userchat-to-alf-setup.sop.md](../../../agent-sops/userchat-to-alf-setup.sop.md)
 - **Mermaid Documentation**: https://mermaid.js.org/
 
 ## Notes
