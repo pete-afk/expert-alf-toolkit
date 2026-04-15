@@ -42,13 +42,9 @@ if not LOCAL_EMBEDDING_AVAILABLE and not UPSTAGE_API_KEY:
 
 UPSTAGE_BASE_URL = "https://api.upstage.ai/v1"
 
-# Prism Gateway (Claude) - used for tagging and dialog classification
-PRISM_API_KEY = os.getenv("PRISM_API_KEY")
-PRISM_BASE_URL = os.getenv("PRISM_BASE_URL", "https://prism.ch.dev")
-ANTHROPIC_MODEL = "anthropic/claude-sonnet-4-20250514"
-
-# Legacy fallback: ANTHROPIC_API_KEY → PRISM_API_KEY
-ANTHROPIC_API_KEY = PRISM_API_KEY or os.getenv("ANTHROPIC_API_KEY")
+# Claude API - used for tagging and dialog classification
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+ANTHROPIC_MODEL = "claude-sonnet-4-20250514"
 
 EMBEDDING_MODEL = "embedding-passage"
 LLM_MODEL = "solar-mini"

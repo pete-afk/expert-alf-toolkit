@@ -49,11 +49,7 @@ load_dotenv(REPO_ROOT / ".env")
 
 PERSONA_FILE = REPO_ROOT / "prompts" / "persona_archetypes.md"
 
-# LLM access goes through Prism (Channel.io's Anthropic-compatible gateway) by
-# default. Override via env if pointing at direct Anthropic or another gateway.
-# Model IDs require a provider prefix on Prism (e.g. "anthropic/<model>").
-LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "https://prism.ch.dev")
-PERSONA_MODEL = os.environ.get("PERSONA_MODEL", "anthropic/claude-sonnet-4-6")
+PERSONA_MODEL = os.environ.get("PERSONA_MODEL", "claude-sonnet-4-6")
 PERSONA_MAX_TOKENS = 200  # persona messages are short; cap protects against runaway
 
 # Per-archetype char caps (mirrors prompts/persona_archetypes.md Hard rule 4).
@@ -440,13 +436,13 @@ async def main_async(args: argparse.Namespace) -> int:
     persona_system_prompt = load_persona_prompt()
     client_tone = None  # v0: future enhancement — load from canonical_input.yaml
 
-    anthropic_client = AsyncAnthropic(base_url=LLM_BASE_URL)
+    anthropic_client = AsyncAnthropic()
     worker_count = max(1, args.workers)
 
     print(
         f"[runner] run_id={args.run_id} channel={args.channel_url} "
         f"scenarios={len(scenarios)} workers={worker_count} "
-        f"model={PERSONA_MODEL} base_url={LLM_BASE_URL}"
+        f"model={PERSONA_MODEL}"
     )
 
     if worker_count == 1:

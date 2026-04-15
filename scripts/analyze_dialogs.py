@@ -57,8 +57,8 @@ from openai import OpenAI
 # ─────────────────────── LLM 클라이언트 ──────────────────────────────────── #
 
 def _use_claude():
-    """Prism Gateway 경유 Claude API 사용 가능 여부"""
-    return bool(os.environ.get("PRISM_API_KEY") or os.environ.get("ANTHROPIC_API_KEY"))
+    """Claude API 사용 가능 여부"""
+    return bool(os.environ.get("ANTHROPIC_API_KEY"))
 
 
 def _get_upstage_client():
@@ -69,17 +69,11 @@ def _get_upstage_client():
 
 
 def _call_llm(prompt: str, max_tokens: int = 2048) -> str:
-    """Prism Gateway 경유 Claude 우선, 없으면 Upstage Solar fallback"""
+    """Claude 우선, 없으면 Upstage Solar fallback"""
     if _use_claude():
         import anthropic
-        prism_key = os.environ.get("PRISM_API_KEY")
-        api_key = prism_key or os.environ["ANTHROPIC_API_KEY"]
-        base_url = os.environ.get("PRISM_BASE_URL", "https://prism.ch.dev") if prism_key else None
-        client = anthropic.Anthropic(
-            api_key=api_key,
-            **({"base_url": base_url} if base_url else {})
-        )
-        model = os.environ.get("ANTHROPIC_MODEL", "anthropic/claude-haiku-4-5-20251001")
+        client = anthropic.Anthropic()
+        model = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")
         response = client.messages.create(
             model=model,
             max_tokens=max_tokens,
@@ -629,7 +623,7 @@ def main():
 
     # API 확인
     if not _use_claude() and not os.environ.get("UPSTAGE_API_KEY"):
-        raise ValueError("PRISM_API_KEY (또는 ANTHROPIC_API_KEY) 또는 UPSTAGE_API_KEY 환경변수가 필요합니다.")
+        raise ValueError("ANTHROPIC_API_KEY 또는 UPSTAGE_API_KEY 환경변수가 필요합니다.")
 
     # ── 데이터 로드 ────────────────────────────────────────────────────────── #
     print(f"\n📂 데이터 로드 중...")

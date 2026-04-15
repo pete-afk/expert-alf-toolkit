@@ -494,12 +494,9 @@ settings" — preserves Rule-7 (scenario ID stability) and Rule-3
 | `python-json-logger` | structured logging (not yet wired) |
 
 `ANTHROPIC_API_KEY` must be set in the user's environment or a `.env` file
-at the repo root. Each part-timer using the skill needs their own key
-(typically the company-issued Prism Gateway key).
+at the repo root.
 
-LLM access defaults to Channel.io's Prism Gateway (`https://prism.ch.dev`).
-Override via `LLM_BASE_URL` env var if pointing at direct Anthropic.
-Model defaults to `anthropic/claude-sonnet-4-6`; override via `PERSONA_MODEL`.
+Model defaults to `claude-sonnet-4-6`; override via `PERSONA_MODEL`.
 
 ---
 

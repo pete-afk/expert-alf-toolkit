@@ -13,7 +13,7 @@ Pipeline:
   1. Load scenarios + transcripts. Pair by scenario_id.
   2. For each scenario:
      - Rule-based short-circuit on terminated_reason `timeout` / `error`.
-     - Otherwise call the judge (Anthropic SDK via Prism).
+     - Otherwise call the judge (Anthropic SDK).
   3. Aggregate with the volume-weighted automation-rate formula
      (insight_scoring_formula memory).
   4. Write scores.json (structured) and report.md (human).
@@ -24,9 +24,8 @@ Usage:
     uv run python -m tools.scoring_agent --run-id <id> --dry-run
 
 Env:
-    ANTHROPIC_API_KEY          — Prism key
-    LLM_BASE_URL               — default https://prism.ch.dev
-    JUDGE_MODEL                — default anthropic/claude-sonnet-4-6
+    ANTHROPIC_API_KEY          — Anthropic API key
+    JUDGE_MODEL                — default claude-sonnet-4-6
 """
 
 from __future__ import annotations
@@ -67,8 +66,7 @@ load_dotenv(REPO_ROOT / ".env")
 JUDGE_PROMPT_FILE = REPO_ROOT / "prompts" / "judge_scenario.md"
 JUDGE_PROMPT_VERSION = "v0"
 
-LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "https://prism.ch.dev")
-JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "anthropic/claude-sonnet-4-6")
+JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "claude-sonnet-4-6")
 JUDGE_MAX_TOKENS = 1500
 JUDGE_TEMPERATURE = 0.0
 
@@ -572,12 +570,12 @@ async def main_async(args: argparse.Namespace) -> int:
         return 0
 
     judge_system_prompt = JUDGE_PROMPT_FILE.read_text(encoding="utf-8")
-    client = AsyncAnthropic(base_url=LLM_BASE_URL)
+    client = AsyncAnthropic()
     coverage_mode = config.extra.get("qa_target_mode") or config.extra.get("coverage_mode")
 
     print(
         f"[scorer] run_id={args.run_id} scenarios={len(scenarios)} "
-        f"judge={JUDGE_MODEL} base_url={LLM_BASE_URL}"
+        f"judge={JUDGE_MODEL}"
     )
 
     scores: list[ScenarioScore] = []
