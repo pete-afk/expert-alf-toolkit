@@ -11,7 +11,9 @@
       "Bash(git branch -D*)",
       "mcp__redash__archive_query",
       "mcp__redash__delete_visualization",
-      "mcp__langfuse__delete_dataset_item"
+      "mcp__langfuse__delete_dataset_item",
+      "writeFile(*.env)",
+      "readFile(*.env)"
     ],
     "ask": [
       "Bash(git push *)",

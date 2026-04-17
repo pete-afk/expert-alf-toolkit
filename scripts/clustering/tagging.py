@@ -13,30 +13,11 @@ from ..config import (
 from ..lang_config import L
 
 
-def _use_claude():
-    """Claude API 사용 가능 여부"""
-    return bool(ANTHROPIC_API_KEY)
-
-
 def _get_upstage_client():
     return OpenAI(api_key=UPSTAGE_API_KEY, base_url=UPSTAGE_BASE_URL)
 
 
-def _call_llm(prompt, llm_model=None):
-    """Claude 우선, 없으면 Upstage fallback"""
-    if _use_claude():
-        import anthropic
-        client = anthropic.Anthropic()
-        model = llm_model or ANTHROPIC_MODEL
-        print(f"   LLM: Claude ({model})")
-        response = client.messages.create(
-            model=model,
-            max_tokens=4096,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=LLM_TEMPERATURE or 0.3
-        )
-        return response.content[0].text
-
+def _call_upstage(prompt, llm_model=None):
     client = _get_upstage_client()
     model = llm_model or LLM_MODEL
     print(f"   LLM: Solar ({model})")
@@ -46,6 +27,27 @@ def _call_llm(prompt, llm_model=None):
         temperature=LLM_TEMPERATURE or 0.3
     )
     return response.choices[0].message.content
+
+
+def _call_llm(prompt, llm_model=None):
+    """Claude 우선, 실패 또는 키 없으면 Upstage fallback"""
+    if ANTHROPIC_API_KEY:
+        try:
+            import anthropic
+            client = anthropic.Anthropic()
+            model = llm_model or ANTHROPIC_MODEL
+            print(f"   LLM: Claude ({model})")
+            response = client.messages.create(
+                model=model,
+                max_tokens=4096,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=LLM_TEMPERATURE or 0.3
+            )
+            return response.content[0].text
+        except Exception as e:
+            print(f"   ⚠️  Claude 실패 ({type(e).__name__}), Solar로 fallback")
+
+    return _call_upstage(prompt, llm_model)
 
 # ───────────────────────────────────────────────────────────── #
 # 실제 대화 메시지 추출

@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>벨리에 × 채널톡 ALF — ALF 전환 가치 제안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root {
+  --bg: #F0F1F4;
+  --surface: #FFFFFF;
+  --surface2: #E8E9ED;
+  --purple: #664FFF;
+  --purple-light: rgba(102,79,255,.07);
+  --gray: #6B7280;
+  --white: #343B46;
+  --text-muted: #AFB5C2;
+}
+.reveal-viewport { background: var(--bg); }
+.reveal .slides { font-family: 'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif; }
+.reveal .slides section {
+  background: var(--bg); color: var(--white);
+  height: 100%; display: flex !important; flex-direction: column; justify-content: center;
+  padding: 48px 60px; box-sizing: border-box; text-align: left;
+}
+.reveal h1,.reveal h2,.reveal h3 { margin: 0 0 12px; font-weight: 700; line-height: 1.25; color:#1F2937; }
+.reveal p { margin: 0 0 10px; line-height:1.6; }
+.reveal ul { margin: 0; padding-left: 1.2em; }
+.reveal ul li { margin-bottom: 6px; line-height:1.5; }
+
+.slide-label { font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gray); margin-bottom:16px; }
+.divider { width:40px; height:2px; background:#D0D3DA; border-radius:2px; margin:10px 0 20px; }
+
+.big-number { font-size:80px; font-weight:900; line-height:1; color:var(--purple); margin-bottom:10px; }
+.big-sub { font-size:18px; color:var(--gray); margin-bottom:28px; line-height:1.5; }
+
+.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:18px 0; }
+.sg3 { grid-template-columns:repeat(3,1fr); }
+.sg2 { grid-template-columns:repeat(2,1fr); }
+.sg5 { grid-template-columns:repeat(5,1fr); }
+.stat-box { background:var(--surface); border:1px solid rgba(0,0,0,.06); border-radius:12px; padding:22px 16px; text-align:center; }
+.stat-box .val { font-size:32px; font-weight:800; color:#1F2937; line-height:1; margin-bottom:8px; }
+.stat-box .val.g { color:#1F2937; }
+.stat-box .lbl { font-size:12px; color:var(--gray); line-height:1.45; }
+
+.pc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:16px 0; }
+.pc2 { grid-template-columns:repeat(2,1fr); }
+.pc4 { grid-template-columns:repeat(4,1fr); }
+.pc { background:var(--surface); border-radius:12px; padding:22px 20px; border:1px solid rgba(0,0,0,.06); border-left:3px solid #D0D3DA; }
+.pc:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.pc.g { border-left-color:var(--purple); }
+.pc.b { border-left-color:#6B7280; }
+.pc.a { border-left-color:#AFB5C2; }
+.pc .tag { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gray); margin-bottom:8px; }
+.pc.g .tag { color:var(--purple); }
+.pc h3 { font-size:15px; margin-bottom:8px; color:#1F2937; }
+.pc p,.pc li { font-size:13px; color:var(--gray); }
+.pc ul { padding-left:1.1em; }
+
+.bar-item { margin-bottom:10px; }
+.bar-meta { display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px; }
+.bar-meta .name { color:var(--white); font-weight:500; }
+.bar-track { background:rgba(0,0,0,.05); border-radius:6px; height:8px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:5px; }
+.bf-p { background:#1F2937; }
+.bf-g { background:#1F2937; }
+.bf-b { background:#6B7280; }
+.bf-a { background:#AFB5C2; }
+.bf-r { background:#D0D3DA; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+.col-6-4 { display:grid; grid-template-columns:1.5fr 1fr; gap:32px; }
+.col-4-6 { display:grid; grid-template-columns:1fr 1.5fr; gap:32px; }
+
+.pill-row { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.pill { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:600; border:none; background:rgba(0,0,0,.05); color:var(--gray); }
+
+.cta-box { background:var(--purple); border:none; border-radius:14px; padding:28px 32px; margin:18px 0; text-align:center; }
+.cta-box h2 { font-size:24px; margin-bottom:10px; color:#FFFFFF; }
+.cta-box p { color:rgba(255,255,255,.8); font-size:14px; }
+
+/* ChannelTalk Chat Widget */
+.ct-widget { width:100%; max-width:460px; border-radius:16px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06); background:#fff; display:flex; flex-direction:column; }
+.ct-header { background:linear-gradient(135deg, #664FFF 0%, #5A3FE8 100%); padding:16px 18px; display:flex; align-items:center; gap:12px; flex-shrink:0; }
+.ct-header-avatar { width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:16px; color:#fff; font-weight:700; flex-shrink:0; }
+.ct-header-info { color:#fff; }
+.ct-header-info .ct-name { font-size:14px; font-weight:700; line-height:1.3; }
+.ct-header-info .ct-status { font-size:11px; opacity:.75; display:flex; align-items:center; gap:4px; }
+.ct-header-info .ct-status::before { content:''; width:6px; height:6px; border-radius:50%; background:#4ADE80; }
+.ct-body { flex:1; overflow-y:auto; padding:14px 14px 8px; display:flex; flex-direction:column; gap:10px; background:#EDEEF2; }
+.ct-msg { display:flex; gap:8px; align-items:flex-end; max-width:92%; }
+.ct-msg.user { align-self:flex-end; flex-direction:row-reverse; }
+.ct-msg.bot { align-self:flex-start; }
+.ct-avatar { width:28px; height:28px; border-radius:50%; background:var(--purple); display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff; font-weight:700; flex-shrink:0; margin-bottom:2px; }
+.ct-bubble { padding:10px 14px; border-radius:16px; font-size:13px; line-height:1.6; max-width:320px; }
+.ct-msg.bot .ct-bubble { background:#fff; color:#1F2937; border:none; border-bottom-left-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,.06); }
+.ct-msg.user .ct-bubble { background:var(--purple); color:#fff; border-bottom-right-radius:4px; }
+.ct-bot-name { font-size:10px; color:var(--gray); font-weight:600; margin-bottom:3px; margin-left:36px; }
+.ct-input { padding:10px 14px; border-top:1px solid rgba(0,0,0,.06); display:flex; align-items:center; gap:8px; flex-shrink:0; background:#fff; }
+.ct-input-field { flex:1; background:#F3F4F6; border:none; border-radius:20px; padding:8px 14px; font-size:12px; color:var(--gray); }
+.ct-input-send { width:28px; height:28px; border-radius:50%; background:var(--purple); border:none; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ct-input-send svg { width:14px; height:14px; fill:#fff; }
+
+.hl { padding:14px 18px; background:var(--surface); border-radius:10px; border:1px solid rgba(0,0,0,.06); }
+.hl.g { background:rgba(0,0,0,.02); border:1px solid rgba(0,0,0,.07); }
+.hl.a { background:rgba(0,0,0,.02); border:1px solid rgba(0,0,0,.07); }
+
+.ac { color:var(--purple); font-weight:700; }
+.mu { color:var(--gray); }
+
+.cover-label { font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--gray); margin-bottom:24px; display:flex; align-items:center; gap:8px; }
+.cover-label::before { content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--gray); }
+
+.tl-item { display:flex; gap:14px; margin-bottom:12px; align-items:flex-start; }
+.tl-dot { width:9px; height:9px; border-radius:50%; background:var(--purple); margin-top:5px; flex-shrink:0; }
+.tl-dot.g { background:var(--purple); }
+.tl-dot.b { background:rgba(102,79,255,.5); }
+.tl-dot.a { background:var(--gray); }
+.tl-label { font-size:11px; color:var(--gray); margin-bottom:2px; font-weight:500; }
+.tl-text { font-size:13px; }
+
+.demo-note { font-size:11px; color:var(--gray); margin-top:10px; padding:8px 12px; background:rgba(0,0,0,.03); border-radius:8px; line-height:1.6; }
+
+/* Animations */
+@keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes growBar { from { width:0; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes scaleIn { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:scale(1); } }
+@keyframes countPop { 0% { opacity:0; transform:scale(.7); } 60% { transform:scale(1.04); } 100% { opacity:1; transform:scale(1); } }
+
+.reveal .slides section.present .slide-label,
+.reveal .slides section.present h1,
+.reveal .slides section.present h2 { animation: slideUp .5s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .divider { animation: slideUp .5s .1s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .stat-box { animation: scaleIn .4s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .stat-grid .stat-box:nth-child(1) { animation-delay:.15s; }
+.reveal .slides section.present .stat-grid .stat-box:nth-child(2) { animation-delay:.25s; }
+.reveal .slides section.present .stat-grid .stat-box:nth-child(3) { animation-delay:.35s; }
+.reveal .slides section.present .stat-grid .stat-box:nth-child(4) { animation-delay:.45s; }
+.reveal .slides section.present .stat-grid .stat-box:nth-child(5) { animation-delay:.55s; }
+.reveal .slides section.present .pc { animation: slideUp .45s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .pc-grid .pc:nth-child(1) { animation-delay:.15s; }
+.reveal .slides section.present .pc-grid .pc:nth-child(2) { animation-delay:.28s; }
+.reveal .slides section.present .pc-grid .pc:nth-child(3) { animation-delay:.41s; }
+.reveal .slides section.present .pc-grid .pc:nth-child(4) { animation-delay:.54s; }
+.reveal .slides section.present .bar-fill { animation: growBar .7s .3s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .bar-item:nth-child(1) .bar-fill { animation-delay:.2s; }
+.reveal .slides section.present .bar-item:nth-child(2) .bar-fill { animation-delay:.3s; }
+.reveal .slides section.present .bar-item:nth-child(3) .bar-fill { animation-delay:.4s; }
+.reveal .slides section.present .bar-item:nth-child(4) .bar-fill { animation-delay:.5s; }
+.reveal .slides section.present .bar-item:nth-child(5) .bar-fill { animation-delay:.6s; }
+.reveal .slides section.present .bar-item:nth-child(6) .bar-fill { animation-delay:.7s; }
+.reveal .slides section.present .big-number { animation: countPop .6s .2s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .hl { animation: slideUp .45s .2s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .tl-item { animation: slideUp .35s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .tl-item:nth-child(1) { animation-delay:.15s; }
+.reveal .slides section.present .tl-item:nth-child(2) { animation-delay:.28s; }
+.reveal .slides section.present .tl-item:nth-child(3) { animation-delay:.41s; }
+.reveal .slides section.present .tl-item:nth-child(4) { animation-delay:.54s; }
+.reveal .slides section.present .cta-box { animation: scaleIn .5s .3s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .ct-widget { animation: scaleIn .5s .1s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .pill-row .pill { animation: scaleIn .3s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section.present .pill-row .pill:nth-child(1) { animation-delay:.2s; }
+.reveal .slides section.present .pill-row .pill:nth-child(2) { animation-delay:.3s; }
+.reveal .slides section.present .pill-row .pill:nth-child(3) { animation-delay:.4s; }
+.reveal .slides section.present .pill-row .pill:nth-child(4) { animation-delay:.5s; }
+
+.reveal .slides section:first-child.present .stat-box { animation: scaleIn .4s cubic-bezier(.22,1,.36,1) both; }
+.reveal .slides section:first-child.present .stat-box:nth-child(1) { animation-delay:.5s; }
+.reveal .slides section:first-child.present .stat-box:nth-child(2) { animation-delay:.65s; }
+.reveal .slides section:first-child.present .stat-box:nth-child(3) { animation-delay:.8s; }
+.reveal .slides section:first-child.present .stat-box:nth-child(4) { animation-delay:.95s; }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- ============================
+  S1: 커버
+============================= -->
+<section>
+  <div class="cover-label">벨리에 &times; 채널톡 ALF &mdash; ALF 전환 가치 제안</div>
+  <div class="two-col" style="align-items:center;gap:52px">
+    <div>
+      <h1 style="font-size:42px;line-height:1.2;margin-bottom:18px">
+        벨리에 상담 10건 중 7건,<br>
+        <span style="color:var(--purple)">ALF가 해결할 수 있습니다.</span>
+      </h1>
+      <p style="font-size:15px;color:var(--gray);line-height:1.8;margin-bottom:28px">
+        최근 3개월 상담 2,725건을 전수 분석했습니다.<br>
+        추측이 아닌, 벨리에 데이터가 보여주는 자동화 경로입니다.
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <span class="pill" style="background:#1F2937;color:#fff">실 데이터 2,725건 전수 분석</span>
+        <span class="pill">2026.04 기준</span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:15px;color:var(--gray);font-weight:500;line-height:1.8;max-width:280px;margin:0 auto">
+        어떤 문의가 오는지,<br>
+        어떤 문의에 사람이 필요한지,<br>
+        어떤 문의를 ALF가 대신할 수 있는지.<br><br>
+        2,725건의 실제 상담이<br>
+        그 답을 보여줍니다.
+      </div>
+      <div class="stat-grid" style="max-width:420px;margin:28px auto 0">
+        <div class="stat-box"><div class="val g">2,725</div><div class="lbl">분석 건수</div></div>
+        <div class="stat-box"><div class="val g">6</div><div class="lbl">주요 문의 유형</div></div>
+        <div class="stat-box"><div class="val g">68.8%</div><div class="lbl">ALF 해결</div></div>
+        <div class="stat-box"><div class="val g">5초</div><div class="lbl">첫 응답</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  S2: 현재 상황 — 일반봇의 한계
+============================= -->
+<section>
+  <div class="slide-label">현재 상황</div>
+  <h2 style="font-size:30px;margin-bottom:6px">일반봇은 <span class="ac">인사만 하고 넘깁니다</span></h2>
+  <div class="divider"></div>
+  <p style="font-size:14px;color:var(--gray);margin-bottom:20px">일반봇이 참여한 2,060건 중 85.6%가 "상담사에게 연결해드리겠습니다"로 끝납니다. 실질적으로 해결하는 건은 거의 없습니다.</p>
+
+  <div class="two-col" style="gap:28px;align-items:start">
+    <div>
+      <div class="stat-grid sg2" style="margin-bottom:16px">
+        <div class="stat-box">
+          <div class="val g" style="font-size:36px">85.6%</div>
+          <div class="lbl">상담사에게 전환</div>
+        </div>
+        <div class="stat-box">
+          <div class="val g" style="font-size:36px">10.9%</div>
+          <div class="lbl">일반봇 해결률</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:var(--gray);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">일반봇 메시지 구성 (2,840건)</div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">"담당 매니저와 연결해드리겠습니다"</span><span class="ac">45.0%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-p" style="width:100%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">"안녕하세요, 벨리에입니다!"</span><span>22.6%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-b" style="width:50%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">기타 자동응답</span><span>11.8%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-a" style="width:26%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">아웃바운드 (인플루언서)</span><span class="mu">6.2%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-r" style="width:14%"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="hl g" style="padding:18px 20px;margin-bottom:14px">
+        <p style="font-size:14px;color:#1F2937;font-weight:700;margin-bottom:8px">일반봇 "해결" 296건의 실체</p>
+        <ul style="font-size:13px;color:var(--gray);margin:0;padding-left:1.1em">
+          <li>인플루언서 아웃바운드 &mdash; 62건 (CS가 아님)</li>
+          <li><strong>고객이 답을 못 받고 이탈</strong> &mdash; 157건</li>
+          <li>워크플로우 자동 안내 &mdash; 3건</li>
+          <li>실제 해결 추정 &mdash; ~70건 (2.6%)</li>
+        </ul>
+      </div>
+      <div class="hl" style="padding:14px 18px">
+        <p style="font-size:13px;margin:0"><span class="ac">핵심:</span> 일반봇의 실질 해결률은 <strong>2.6~10.9%</strong>. "고객이 포기한 것"을 종료로 처리하고 있습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  S3: 야간/주말 공백 + 반복 문의
+============================= -->
+<section>
+  <div class="slide-label">상담 패턴</div>
+  <h2 style="font-size:28px;margin-bottom:6px"><span class="ac">33.2%</span>는 아무도 답하지 않는 시간에 옵니다</h2>
+  <div class="divider"></div>
+
+  <div class="two-col" style="gap:28px;align-items:start">
+    <div>
+      <div class="stat-grid sg2" style="margin-bottom:16px">
+        <div class="stat-box">
+          <div class="val g" style="font-size:36px">33.2%</div>
+          <div class="lbl">운영시간 외 상담</div>
+        </div>
+        <div class="stat-box">
+          <div class="val g" style="font-size:36px">6시간</div>
+          <div class="lbl">평균 첫 응답까지</div>
+        </div>
+      </div>
+
+      <div class="hl g" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:14px;color:#1F2937;font-weight:700;margin-bottom:6px">야간/주말 = 고객 대기 시간</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          운영시간(09~18시) 밖에서 들어온 문의는<br>
+          다음 영업일까지 기다려야 합니다.<br>
+          일반봇은 "연결해드리겠습니다"만 반복하지만<br>
+          <strong>실제로는 아무도 연결되지 않습니다.</strong>
+        </p>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:var(--gray);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">반복 문의 Top 6 (월 기준)</div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">사이즈 &middot; 재입고 문의</span><span class="ac">~150건 (16.5%)</span></div>
+        <div class="bar-track"><div class="bar-fill bf-p" style="width:100%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">반품 &middot; 취소</span><span>~87건 (9.6%)</span></div>
+        <div class="bar-track"><div class="bar-fill bf-g" style="width:58%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">AS 접수</span><span>~78건 (8.6%)</span></div>
+        <div class="bar-track"><div class="bar-fill bf-g" style="width:52%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">교환</span><span>~76건 (8.3%)</span></div>
+        <div class="bar-track"><div class="bar-fill bf-b" style="width:51%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">배송 현황 &middot; 주소 변경</span><span>~68건 (7.5%)</span></div>
+        <div class="bar-track"><div class="bar-fill bf-b" style="width:45%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">쿠폰 &middot; 적립금</span><span>~58건 (6.4%)</span></div>
+        <div class="bar-track"><div class="bar-fill bf-a" style="width:39%"></div></div>
+      </div>
+
+      <div class="hl" style="margin-top:14px;padding:12px 16px">
+        <p style="font-size:12px;margin:0">모든 유형에서 일반봇은 <strong>"인사 &rarr; 상담사 연결"</strong> 이상의 역할을 하지 못합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  S3.5 [NEW]: ALF 세팅 — 무엇을 구축했는가
+============================= -->
+<section>
+  <div class="slide-label">ALF 세팅 완료</div>
+  <h2 style="font-size:28px;margin-bottom:6px">벨리에 실제 상담 2,725건을 분석하여 <span class="ac">맞춤 구축</span></h2>
+  <div class="divider"></div>
+  <p style="font-size:14px;color:var(--gray);margin-bottom:18px">벨리에의 실제 상담 패턴에 맞춰 규칙, 지식, 태스크를 설계했습니다. 아래는 실제 QA 테스트까지 완료된 세팅입니다.</p>
+
+  <div class="stat-grid sg3" style="margin-bottom:20px">
+    <div class="stat-box">
+      <div class="val g" style="font-size:48px">규칙</div>
+      <div class="lbl" style="font-size:13px;margin-top:8px">시스템 프롬프트<br>벨리에 톤앤매너 &middot; 응대 원칙 &middot; 에스컬레이션 기준</div>
+    </div>
+    <div class="stat-box">
+      <div class="val g" style="font-size:48px">14</div>
+      <div class="lbl" style="font-size:13px;margin-top:8px">지식 (Knowledge)<br>사이즈 가이드 &middot; 반품/교환 정책 &middot; 재입고 안내 등</div>
+    </div>
+    <div class="stat-box">
+      <div class="val g" style="font-size:48px">7</div>
+      <div class="lbl" style="font-size:13px;margin-top:8px">태스크 (Task)<br>주문취소 &middot; 반품접수 &middot; 교환접수 &middot; AS접수 등</div>
+    </div>
+  </div>
+
+  <div class="two-col" style="gap:20px;align-items:start">
+    <div>
+      <div class="hl g" style="padding:16px 18px">
+        <p style="font-size:13px;color:var(--purple);font-weight:700;margin-bottom:8px">지식 14개 항목</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span class="pill">데님 사이즈 가이드</span>
+          <span class="pill">아우터 사이즈 가이드</span>
+          <span class="pill">탑 사이즈 가이드</span>
+          <span class="pill">반품/교환 정책</span>
+          <span class="pill">재입고 안내</span>
+          <span class="pill">쿠폰/적립금 정책</span>
+          <span class="pill">AS 수선 안내</span>
+          <span class="pill">배송 정책</span>
+          <span class="pill">세탁/관리법</span>
+          <span class="pill">가죽제품 관리</span>
+          <span class="pill">팝업스토어 안내</span>
+          <span class="pill">브랜드 소개</span>
+          <span class="pill">멤버십/등급 안내</span>
+          <span class="pill">주문/결제 FAQ</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="hl g" style="padding:16px 18px">
+        <p style="font-size:13px;color:var(--purple);font-weight:700;margin-bottom:8px">태스크 7개</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span class="pill" style="background:#1F2937;color:#fff">주문 취소</span>
+          <span class="pill" style="background:#1F2937;color:#fff">반품 접수</span>
+          <span class="pill" style="background:#1F2937;color:#fff">교환 접수</span>
+          <span class="pill" style="background:#6B7280;color:#fff">AS/수선 접수</span>
+          <span class="pill" style="background:#6B7280;color:#fff">배송 조회</span>
+          <span class="pill" style="background:#AFB5C2;color:#fff">주소 변경</span>
+          <span class="pill" style="background:#AFB5C2;color:#fff">주문 조회</span>
+        </div>
+        <p style="font-size:12px;color:var(--gray);margin-top:10px;margin-bottom:0">카페24 &middot; 이지어드민 API 연동 &mdash; 별도 개발 없이 기존 시스템 활용</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  Demo 1: 재입고 문의 (현행) — 최다 문의
+============================= -->
+<section>
+  <div class="slide-label">ALF 데모 1 &mdash; 재입고 문의 (최다 문의)</div>
+  <h2 style="font-size:26px;margin-bottom:6px">"언제 재입고 되나요?" &mdash; <span class="ac">3채널 알림 안내</span> (월 ~500건)</h2>
+  <p style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:8px">월 ~500건 &mdash; 가장 많은 문의를 ALF가 즉시 해결합니다</p>
+  <div class="divider"></div>
+
+  <div class="col-4-6" style="gap:28px;align-items:start">
+    <div>
+      <div class="hl a" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:#1F2937;font-weight:700;margin-bottom:6px">일반봇 (현재)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          "담당 매니저와 연결해드리겠습니다."<br>
+          &rarr; 상담사 대기 &rarr; "아직 미정이에요"<br>
+          &rarr; 매번 같은 답변 반복
+        </p>
+      </div>
+      <div class="hl g" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:var(--purple);font-weight:700;margin-bottom:6px">ALF (도입 후)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          재입고 미확정 사실을 솔직히 안내하고<br>
+          <span class="ac">인스타 / 일정페이지 / SMS</span><br>
+          3가지 알림 채널을 즉시 안내<br><br>
+          고객이 직접 알림 신청 가능 &rarr; 상담 종결
+        </p>
+      </div>
+      <div class="stat-grid sg2" style="margin:0">
+        <div class="stat-box" style="padding:14px 12px">
+          <div class="val g" style="font-size:28px">~500건</div>
+          <div class="lbl">월 재입고 관련 문의</div>
+        </div>
+        <div class="stat-box" style="padding:14px 12px">
+          <div class="val g" style="font-size:28px">100%</div>
+          <div class="lbl">ALF 즉시 해결 가능</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="ct-widget" style="height:420px">
+        <div class="ct-header">
+          <div class="ct-header-avatar">B</div>
+          <div class="ct-header-info">
+            <div class="ct-name">벨리에 ALF</div>
+            <div class="ct-status">응답 가능</div>
+          </div>
+        </div>
+        <div class="ct-body">
+          <div class="ct-msg user">
+            <div class="ct-bubble">미드와이드 데님 블랙 미스트 인디고 28/30 언제 재입고 될까요?</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">안녕하세요! 미드 와이드 데님 블랙 미스트 인디고 28/30 사이즈 재입고를 기다려주시는군요.<br><br>현재 정확한 재입고 일정은 미확정 상태입니다. 재입고 소식을 가장 빨리 받으실 수 있는 방법을 안내드릴게요.<br><br>&#10102; <strong>인스타그램</strong> @belier_official 팔로우<br>&#10103; <strong>일정페이지</strong> 재입고 알림 신청<br>&#10104; <strong>SMS 알림</strong> 상품 페이지 &gt; 재입고 알림 버튼<br><br>위 채널에서 재입고 시 가장 먼저 안내됩니다!</div>
+          </div>
+        </div>
+        <div class="ct-input">
+          <div class="ct-input-field">메시지를 입력하세요</div>
+          <div class="ct-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+      <div class="demo-note">일반봇: 상담사 대기 후 "미정" 답변 / ALF: 즉시 3채널 알림 안내 &rarr; 상담 종결</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  Demo 1.5: 재입고 — 스프레드시트 연동 시
+============================= -->
+<section>
+  <div class="slide-label">ALF 데모 1.5 &mdash; 재입고 일정 자동 조회</div>
+  <h2 style="font-size:26px;margin-bottom:6px">여기서 한 걸음 더 &mdash; <span class="ac">시트만 정리하면 즉시 답변</span></h2>
+  <p style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:8px">재입고 일정 구글시트 한 장이면, 500건의 문의가 5초 만에 종결됩니다</p>
+  <div class="divider"></div>
+
+  <div class="col-4-6" style="gap:28px;align-items:start">
+    <div>
+      <div class="hl a" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:#1F2937;font-weight:700;margin-bottom:6px">데모 1 (현행)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          재입고 일정이 미확정 &rarr;<br>
+          "확정되면 인스타/SMS로 안내드리겠습니다"<br>
+          <strong>고객은 기다려야 합니다</strong>
+        </p>
+      </div>
+      <div class="hl g" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:var(--purple);font-weight:700;margin-bottom:6px">데모 1.5 (시트 연동 시)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          벨리에에서 재입고 일정을<br>
+          <span class="ac">구글 스프레드시트 한 장</span>으로 관리하면<br>
+          ALF가 자동 조회하여 <span class="ac">즉시 정확한 일정을 안내</span>
+        </p>
+      </div>
+
+      <div style="background:rgba(102,79,255,.05);border:1px solid rgba(102,79,255,.15);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.6">
+          <span class="ac">벨리에 준비 사항:</span><br>
+          구글시트에 <strong>상품명 / 사이즈 / 재입고 예정일</strong> 3칸만 채워주시면 됩니다.<br>
+          어차피 인스타에 공지하시려면 정리하셔야 하는 정보입니다.
+        </p>
+      </div>
+
+      <div class="stat-grid sg2" style="margin:0">
+        <div class="stat-box" style="padding:14px 10px">
+          <div class="val g" style="font-size:22px">~500건</div>
+          <div class="lbl">월 재입고 문의</div>
+        </div>
+        <div class="stat-box" style="padding:14px 10px">
+          <div class="val g" style="font-size:22px">5초</div>
+          <div class="lbl">답변까지 소요시간</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="ct-widget" style="height:440px">
+        <div class="ct-header">
+          <div class="ct-header-avatar">B</div>
+          <div class="ct-header-info">
+            <div class="ct-name">벨리에 ALF</div>
+            <div class="ct-status">응답 가능</div>
+          </div>
+        </div>
+        <div class="ct-body">
+          <div class="ct-msg user">
+            <div class="ct-bubble">미드와이드 데님 블랙 미스트 인디고 28 재입고 언제 되나요?</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">문의 주신 미드와이드 데님 - 블랙 미스트 인디고 28 사이즈는 <strong>4월 14일(월) 오후 6시 재입고 예정</strong>입니다.<br><br>&bull; 안내 드린 일정은 내부사정으로 변동될 수 있는 점 참고 부탁드립니다<br>&bull; 상품 페이지에서 '재입고 알림'을 신청하시면 출시 시 SMS로 안내드립니다</div>
+          </div>
+          <div class="ct-msg user">
+            <div class="ct-bubble">오 감사합니다!</div>
+          </div>
+        </div>
+        <div class="ct-input">
+          <div class="ct-input-field">메시지를 입력하세요</div>
+          <div class="ct-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+      <div class="demo-note">구글시트 앱함수 연동 &rarr; ALF가 상품별 재입고 일정을 실시간 조회하여 정확한 날짜로 즉시 안내</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  Demo 2: 승인노드 (AS 접수)
+============================= -->
+<section>
+  <div class="slide-label">ALF 데모 2 &mdash; 승인노드 (AS/수선 접수)</div>
+  <h2 style="font-size:26px;margin-bottom:6px">"수선 가능한가요?" &mdash; <span class="ac">ALF가 정보 수집, 상담사는 승인만</span> (월 ~91건)</h2>
+  <p style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:8px">건당 10~15분이 걸리던 접수가 수초로 &mdash; 가장 복잡한 프로세스를 자동화합니다</p>
+  <div class="divider"></div>
+
+  <div class="col-4-6" style="gap:28px;align-items:start">
+    <div>
+      <div style="font-size:12px;color:var(--gray);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Before &mdash; 현재 프로세스</div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
+        <div class="hl a" style="padding:8px 12px"><p style="font-size:12px;margin:0">1. 고객 문의 &rarr; 상담사 배정</p></div>
+        <div style="text-align:center;color:var(--text-muted);font-size:12px">&darr;</div>
+        <div class="hl a" style="padding:8px 12px"><p style="font-size:12px;margin:0">2. 상담사가 사진 요청 + 증상 파악</p></div>
+        <div style="text-align:center;color:var(--text-muted);font-size:12px">&darr;</div>
+        <div class="hl a" style="padding:8px 12px"><p style="font-size:12px;margin:0">3. 상담사가 접수 정보 정리 + 안내 &mdash; <strong>건당 10~15분</strong></p></div>
+      </div>
+
+      <div style="font-size:12px;color:var(--gray);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">After &mdash; ALF + 승인노드</div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div class="hl g" style="padding:8px 12px"><p style="font-size:12px;margin:0">1. <span class="ac">ALF</span>가 공감 + 사진 수집 + 정보 정리</p></div>
+        <div style="text-align:center;color:var(--text-muted);font-size:12px">&darr;</div>
+        <div class="hl" style="padding:8px 12px;border:2px solid var(--purple)"><p style="font-size:12px;margin:0"><span class="ac">2. 승인노드</span> &mdash; 상담사가 요약 확인 후 버튼 클릭 (수초)</p></div>
+        <div style="text-align:center;color:var(--text-muted);font-size:12px">&darr;</div>
+        <div class="hl g" style="padding:8px 12px"><p style="font-size:12px;margin:0">3. <span class="ac">ALF</span>가 본사 발송 안내 + 접수 완료 &mdash; <span class="ac">자동 완료</span></p></div>
+      </div>
+    </div>
+    <div>
+      <div class="ct-widget" style="height:460px">
+        <div class="ct-header">
+          <div class="ct-header-avatar">B</div>
+          <div class="ct-header-info">
+            <div class="ct-name">벨리에 ALF</div>
+            <div class="ct-status">응답 가능</div>
+          </div>
+        </div>
+        <div class="ct-body">
+          <div class="ct-msg user">
+            <div class="ct-bubble">달스톤 레더백 똑딱이 부분이 떨어져서 반대편에 붙은 상태인데 수선 가능한가요?</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">아이고, 똑딱이 부분이 떨어졌군요. 불편하셨겠습니다. 수선 접수를 도와드리겠습니다.<br><br>상태를 확인할 수 있도록 해당 부위 사진을 보내주시겠어요?</div>
+          </div>
+          <div class="ct-msg user">
+            <div class="ct-bubble">[사진 첨부]</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">사진 확인했습니다. 접수를 위해 정리드릴게요.<br>&bull; 제품명: 달스톤 레더백<br>&bull; 증상: 똑딱이 탈락 (반대편 부착)<br><br>이 내용으로 수선 접수를 진행할까요?</div>
+          </div>
+          <div class="ct-msg user">
+            <div class="ct-bubble">네 부탁드립니다</div>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0">&#128274; 내부: 상담사 "수선 접수 승인" 클릭 (수초)</div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">&#9989; 수선 접수가 완료되었습니다. 제품을 본사로 보내주시면 확인 후 수선 진행됩니다.<br><br>&#128230; 발송지: 서울시 성동구 벨리에 본사<br>&#128666; 착불 택배로 보내주세요<br>소요기간: 수령 후 약 2~3주</div>
+          </div>
+        </div>
+        <div class="ct-input">
+          <div class="ct-input-field">메시지를 입력하세요</div>
+          <div class="ct-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+      <div class="demo-note">일반봇: 상담사가 전체 프로세스 수동 처리 (10~15분) / ALF: 정보 수집 자동화, 상담사는 승인 버튼만 클릭 (수초)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  Demo 3: 시스템 연동 (주문 취소)
+============================= -->
+<section>
+  <div class="slide-label">ALF 데모 3 &mdash; 시스템 연동 자동 처리</div>
+  <h2 style="font-size:26px;margin-bottom:6px">"주문 취소해주세요" &mdash; <span class="ac">ALF가 직접 처리</span> (월 ~87건)</h2>
+  <p style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:8px">카페24 어드민 로그인 없이, ALF가 조회부터 취소까지 직접 처리합니다</p>
+  <div class="divider"></div>
+
+  <div class="col-4-6" style="gap:28px;align-items:start">
+    <div>
+      <div class="hl a" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:#1F2937;font-weight:700;margin-bottom:6px">일반봇 (현재)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          "담당 매니저와 연결해드리겠습니다."<br>
+          &rarr; 상담사가 카페24 어드민 로그인<br>
+          &rarr; 주문 찾기 &rarr; 수동 취소 처리
+        </p>
+      </div>
+      <div class="hl g" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:var(--purple);font-weight:700;margin-bottom:6px">ALF (도입 후)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          카페24 &middot; 이지어드민에 직접 연결<br>
+          <span class="ac">주문 조회 &rarr; 확인 &rarr; 취소 실행까지 자동</span>
+        </p>
+      </div>
+
+      <div class="pill-row">
+        <span class="pill" style="background:#1F2937;color:#fff">취소</span>
+        <span class="pill" style="background:#1F2937;color:#fff">반품</span>
+        <span class="pill" style="background:#6B7280;color:#fff">교환</span>
+        <span class="pill" style="background:#6B7280;color:#fff">배송 추적</span>
+        <span class="pill" style="background:#AFB5C2;color:#fff">쿠폰</span>
+      </div>
+
+      <div class="hl" style="margin-top:12px;padding:12px 16px">
+        <p style="font-size:12px;margin:0">
+          별도 개발이나 시스템 구축 없이, 이미 사용 중인 카페24 &middot; 이지어드민의 <strong>기존 기능을 그대로 연동</strong>하여 바로 적용됩니다.
+        </p>
+      </div>
+    </div>
+    <div>
+      <div class="ct-widget" style="height:480px">
+        <div class="ct-header">
+          <div class="ct-header-avatar">B</div>
+          <div class="ct-header-info">
+            <div class="ct-name">벨리에 ALF</div>
+            <div class="ct-status">응답 가능</div>
+          </div>
+        </div>
+        <div class="ct-body">
+          <div class="ct-msg user">
+            <div class="ct-bubble">방금 주문했는데 취소하고 싶어요</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">주문 취소를 도와드리겠습니다. 확인을 위해 전화번호를 알려주시겠어요?</div>
+          </div>
+          <div class="ct-msg user">
+            <div class="ct-bubble">010-1234-5678</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">확인되었습니다.<br><br>&#128230; 주문번호: 20260401-0001234<br>&bull; 트루 와이드 데님 팬츠 - 스모크 인디고 (30) &times; 1<br>&bull; 178,000원 / 상태: 상품준비중<br><br>이 주문을 취소할까요?</div>
+          </div>
+          <div class="ct-msg user">
+            <div class="ct-bubble">네</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">&#9989; 취소가 완료되었습니다. 카드 결제 취소는 3~5 영업일 내 반영됩니다.</div>
+          </div>
+        </div>
+        <div class="ct-input">
+          <div class="ct-input-field">메시지를 입력하세요</div>
+          <div class="ct-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+      <div class="demo-note">일반봇: 상담사 수동 취소 (카페24 로그인 필요) / ALF: 본인확인 &rarr; 주문조회 &rarr; 취소까지 자동 완결</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  Demo 4: 사이즈 추천
+============================= -->
+<section>
+  <div class="slide-label">ALF 데모 4 &mdash; 사이즈 추천</div>
+  <h2 style="font-size:26px;margin-bottom:6px">"사이즈 어떻게 가면 될까요?" &mdash; <span class="ac">체형 맞춤 즉시 추천</span></h2>
+  <p style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:8px">키/몸무게/인심만으로 개인화된 추천 &mdash; 상담사 없이 즉시 완결합니다</p>
+  <div class="divider"></div>
+
+  <div class="col-4-6" style="gap:28px;align-items:start">
+    <div>
+      <div class="hl a" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:#1F2937;font-weight:700;margin-bottom:6px">일반봇 (현재)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          "안녕하세요, 벨리에입니다!<br>
+          담당 매니저와 연결해드리겠습니다."<br>
+          &rarr; 상담사가 사이즈표 찾아서 수동 안내
+        </p>
+      </div>
+      <div class="hl g" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:var(--purple);font-weight:700;margin-bottom:6px">ALF (도입 후)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          등록된 사이즈 가이드 데이터를 기반으로<br>
+          체형 정보(키/몸무게/인심)에 맞춰<br>
+          <span class="ac">즉시 맞춤 추천으로 완결</span><br><br>
+          "참고 용도" 면책 안내까지 자동 포함
+        </p>
+      </div>
+      <div style="background:rgba(102,79,255,.05);border:1px solid rgba(102,79,255,.15);border-radius:10px;padding:12px 16px">
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.6">
+          <span class="ac">실제 QA 테스트 결과:</span> 체형 정보 기반 사이즈 추천이 정확하게 작동. 상담사 개입 없이 대화가 종결됩니다.
+        </p>
+      </div>
+    </div>
+    <div>
+      <div class="ct-widget" style="height:440px">
+        <div class="ct-header">
+          <div class="ct-header-avatar">B</div>
+          <div class="ct-header-info">
+            <div class="ct-name">벨리에 ALF</div>
+            <div class="ct-status">응답 가능</div>
+          </div>
+        </div>
+        <div class="ct-body">
+          <div class="ct-msg user">
+            <div class="ct-bubble">175/62 인심 81인데 트루스트레이트 사이즈 어떻게 가면 될까요?</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">안녕하세요! 체형 정보 감사합니다.<br><br>175cm / 62kg / 인심 81cm 기준으로 <strong>트루 스트레이트</strong>는 <strong>30 사이즈</strong>를 추천드립니다.<br><br>&bull; 30: 허리 40 / 허벅지 30.5 / 밑위 28 / 밑단 20 / 총장 103<br><br>슬림한 체형이시라 30이 깔끔하게 떨어질 거예요. 인심 81이시면 기장도 적당합니다.<br><br>다만, 사이즈 추천은 참고 용도로 안내드리는 점 양해 부탁드립니다.</div>
+          </div>
+        </div>
+        <div class="ct-input">
+          <div class="ct-input-field">메시지를 입력하세요</div>
+          <div class="ct-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+      <div class="demo-note">일반봇: 상담사 연결 대기 (평균 6시간) / ALF: 체형 맞춤 사이즈 즉시 추천 &rarr; 상담 종결</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  Demo 5: 적립금/쿠폰 문의
+============================= -->
+<section>
+  <div class="slide-label">ALF 데모 5 &mdash; 적립금/쿠폰 문의</div>
+  <h2 style="font-size:26px;margin-bottom:6px">"적립금이 안 들어와요" &mdash; <span class="ac">정책 기반 즉시 안내</span> (월 ~58건)</h2>
+  <p style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:8px">정책 기반 문의는 지식만으로 해결 &mdash; 태스크 연동 없이도 효과가 나옵니다</p>
+  <div class="divider"></div>
+
+  <div class="col-4-6" style="gap:28px;align-items:start">
+    <div>
+      <div class="hl a" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:#1F2937;font-weight:700;margin-bottom:6px">일반봇 (현재)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          "담당 매니저와 연결해드리겠습니다."<br>
+          &rarr; 상담사가 정책 확인 후 수동 안내<br>
+          &rarr; 건당 3~5분 소요
+        </p>
+      </div>
+      <div class="hl g" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:var(--purple);font-weight:700;margin-bottom:6px">ALF (도입 후)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          적립금/쿠폰 정책 지식을 기반으로<br>
+          <span class="ac">미가용 적립금 개념 + 지급 조건</span>을<br>
+          즉시 안내하여 완결<br><br>
+          추가 질문에도 정책 기반 일관된 답변
+        </p>
+      </div>
+      <div class="hl" style="padding:12px 16px">
+        <p style="font-size:12px;margin:0"><span class="ac">포인트:</span> 적립금, 쿠폰, 멤버십 등급 문의는 <strong>모두 지식(Knowledge)으로 즉시 해결</strong> &mdash; 태스크 연동 불필요</p>
+      </div>
+    </div>
+    <div>
+      <div class="ct-widget" style="height:400px">
+        <div class="ct-header">
+          <div class="ct-header-avatar">B</div>
+          <div class="ct-header-info">
+            <div class="ct-name">벨리에 ALF</div>
+            <div class="ct-status">응답 가능</div>
+          </div>
+        </div>
+        <div class="ct-body">
+          <div class="ct-msg user">
+            <div class="ct-bubble">구매확정 눌렀는데 적립금이 안 들어옵니다</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">안녕하세요! 적립금 관련 안내드리겠습니다.<br><br>구매확정 후 적립금은 <strong>"미가용 적립금"</strong>으로 먼저 적립되며, 구매확정일로부터 <strong>7일 후</strong> 가용 적립금으로 전환됩니다.<br><br>현재 미가용 상태라면 7일 후 자동으로 사용 가능해집니다. 마이페이지 &gt; 적립금에서 확인하실 수 있어요.<br><br>추가 궁금한 점이 있으시면 편하게 말씀해주세요!</div>
+          </div>
+        </div>
+        <div class="ct-input">
+          <div class="ct-input-field">메시지를 입력하세요</div>
+          <div class="ct-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+      <div class="demo-note">일반봇: 상담사 연결 후 수동 안내 (3~5분) / ALF: 정책 기반 즉시 답변 &rarr; 상담 종결</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  Demo 6: 반품/교환 정책 문의
+============================= -->
+<section>
+  <div class="slide-label">ALF 데모 6 &mdash; 반품/교환 정책 문의</div>
+  <h2 style="font-size:26px;margin-bottom:6px">"환불기한이 얼마나 되나요?" &mdash; <span class="ac">지식이 즉시 해결</span></h2>
+  <p style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:8px">조건, 기한, 배송비를 한 번에 &mdash; 정보 문의와 실행 요청을 ALF가 자동으로 구분합니다</p>
+  <div class="divider"></div>
+
+  <div class="col-4-6" style="gap:28px;align-items:start">
+    <div>
+      <div class="hl a" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:#1F2937;font-weight:700;margin-bottom:6px">일반봇 (현재)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          "담당 매니저와 연결해드리겠습니다."<br>
+          &rarr; 상담사가 정책 확인 후 수동 안내
+        </p>
+      </div>
+      <div class="hl g" style="padding:16px 18px;margin-bottom:14px">
+        <p style="font-size:13px;color:var(--purple);font-weight:700;margin-bottom:6px">ALF (도입 후)</p>
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.7">
+          반품/교환 정책 지식을 기반으로<br>
+          기한, 조건, 배송비까지<br>
+          <span class="ac">한 번에 정확하게 안내</span>
+        </p>
+      </div>
+      <div style="background:rgba(102,79,255,.05);border:1px solid rgba(102,79,255,.15);border-radius:10px;padding:12px 16px">
+        <p style="font-size:12px;color:var(--gray);margin:0;line-height:1.6">
+          <span class="ac">지식 vs 태스크 역할 분리:</span><br>
+          &bull; <strong>정보 문의</strong> (정책, 기한, 조건) &rarr; 지식이 즉시 응답<br>
+          &bull; <strong>실행 요청</strong> (반품 접수, 교환 처리) &rarr; 태스크가 처리<br><br>
+          단순 정보 문의는 태스크 연동 없이도 바로 해결됩니다.
+        </p>
+      </div>
+    </div>
+    <div>
+      <div class="ct-widget" style="height:400px">
+        <div class="ct-header">
+          <div class="ct-header-avatar">B</div>
+          <div class="ct-header-info">
+            <div class="ct-name">벨리에 ALF</div>
+            <div class="ct-status">응답 가능</div>
+          </div>
+        </div>
+        <div class="ct-body">
+          <div class="ct-msg user">
+            <div class="ct-bubble">환불기한이 얼마나 되나요?</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">안녕하세요! 반품/환불 기한 안내드리겠습니다.<br><br>수령일로부터 <strong>7일 이내</strong> 반품 신청이 가능합니다.<br><br>&#10003; <strong>반품 조건</strong><br>&bull; 택(Tag) 미제거<br>&bull; 미착용 상태<br>&bull; 상품 및 부속품 모두 포함<br><br>&#10003; <strong>배송비 안내</strong><br>&bull; 단순 변심: 왕복 배송비 고객 부담 (5,000원)<br>&bull; 상품 하자: 배송비 벨리에 부담<br><br>반품 접수를 원하시면 말씀해주세요!</div>
+          </div>
+        </div>
+        <div class="ct-input">
+          <div class="ct-input-field">메시지를 입력하세요</div>
+          <div class="ct-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+      <div class="demo-note">일반봇: 상담사 연결 대기 / ALF: 기한+조건+배송비까지 한 번에 안내 &rarr; 상담 종결</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  S7: 24시간 응대 — keep as-is
+============================= -->
+<section>
+  <div class="slide-label">24시간 응대</div>
+  <h2 style="font-size:28px;margin-bottom:6px">밤 10시에 문의해도 <span class="ac">즉시 답변</span></h2>
+  <div class="divider"></div>
+
+  <div class="two-col" style="gap:32px;align-items:start">
+    <div>
+      <div class="big-number g">~300건</div>
+      <div class="big-sub">월 야간/주말 자동 처리 건수</div>
+
+      <div class="pc-grid pc2" style="margin-bottom:16px">
+        <div class="pc a">
+          <div class="tag">일반봇</div>
+          <h3>야간에도 인사는 하지만</h3>
+          <p>"상담사에게 연결해드리겠습니다"만 반복. <strong>다음 영업일까지 대기.</strong></p>
+        </div>
+        <div class="pc g">
+          <div class="tag">ALF</div>
+          <h3>야간에도 완결 처리</h3>
+          <p>사이즈 문의, 배송 추적, 취소 &middot; 교환까지 <strong>5초 이내 해결.</strong></p>
+        </div>
+      </div>
+
+      <div class="hl" style="padding:14px 18px">
+        <p style="font-size:13px;margin:0"><span class="ac">효과:</span> 응답 지연으로 인한 감정 격화 약 <strong>104건/월 예방</strong>. "내일 답변 올 때까지 기다려야지" &rarr; "5초 만에 해결됐네"</p>
+      </div>
+    </div>
+    <div>
+      <div class="ct-widget" style="height:380px">
+        <div class="ct-header">
+          <div class="ct-header-avatar">B</div>
+          <div class="ct-header-info">
+            <div class="ct-name">벨리에 ALF</div>
+            <div class="ct-status">응답 가능</div>
+          </div>
+        </div>
+        <div class="ct-body">
+          <div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0">&#128337; 밤 10:42</div>
+          <div class="ct-msg user">
+            <div class="ct-bubble">배송 어디쯤 왔나요? 주문번호 20260328-0004567</div>
+          </div>
+          <div class="ct-bot-name">ALF</div>
+          <div class="ct-msg bot">
+            <div class="ct-avatar">A</div>
+            <div class="ct-bubble">조회해드리겠습니다.<br><br>&#128230; 트루 와이드 데님 팬츠<br>&#128666; CJ대한통운 6012-3456-7890<br>상태: 배송 중 (서울 성동 허브 도착)<br><br>내일 오전 중 도착 예정입니다.</div>
+          </div>
+          <div class="ct-msg user">
+            <div class="ct-bubble">감사합니다 &#128079;</div>
+          </div>
+        </div>
+        <div class="ct-input">
+          <div class="ct-input-field">메시지를 입력하세요</div>
+          <div class="ct-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  S8: 숫자로 보는 차이 — keep as-is
+============================= -->
+<section>
+  <div class="slide-label">일반봇 vs ALF</div>
+  <div class="two-col" style="gap:36px;align-items:start">
+    <div>
+      <div class="big-number g">68.8%</div>
+      <div class="big-sub">일반봇 10.9% 대비 <strong>6.3배</strong></div>
+
+      <div style="font-size:12px;color:var(--gray);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">ALF 해결률 구성</div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">시스템 연동 자동 처리 (Task API)</span><span class="ac">37.0%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-p" style="width:100%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">지식 기반 즉시 답변 (FAQ/RAG)</span><span class="ac">31.6%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-p" style="width:85%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">승인노드 (상담사 버튼 클릭)</span><span>10.0%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-b" style="width:27%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">노이즈 자동 처리</span><span>6.9%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-a" style="width:19%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">감정 예방 효과</span><span>3.8%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-r" style="width:10%"></div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:var(--gray);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;margin-top:20px">핵심 지표 비교</div>
+      <div class="stat-grid sg2">
+        <div class="stat-box">
+          <div class="val" style="font-size:24px;color:var(--gray)">10.9%</div>
+          <div class="lbl">일반봇 해결률</div>
+        </div>
+        <div class="stat-box">
+          <div class="val g" style="font-size:24px;color:var(--purple)">68.8%</div>
+          <div class="lbl">ALF 해결률</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="font-size:24px;color:var(--gray)">~908건</div>
+          <div class="lbl">현재 상담사 처리/월</div>
+        </div>
+        <div class="stat-box">
+          <div class="val g" style="font-size:24px;color:var(--purple)">~216건</div>
+          <div class="lbl">ALF 후 상담사 처리/월</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="font-size:24px;color:var(--gray)">75시간</div>
+          <div class="lbl">현재 상담사 업무/월</div>
+        </div>
+        <div class="stat-box">
+          <div class="val g" style="font-size:24px;color:var(--purple)">19시간</div>
+          <div class="lbl">ALF 후 상담사 업무/월</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="font-size:24px;color:var(--gray)">6시간</div>
+          <div class="lbl">현재 첫 응답</div>
+        </div>
+        <div class="stat-box">
+          <div class="val g" style="font-size:24px;color:var(--purple)">5초</div>
+          <div class="lbl">ALF 첫 응답</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  S8.5 [NEW]: ALF 관여의 4가지 레이어
+============================= -->
+<section>
+  <div class="slide-label">상담사 시간 절감 &mdash; 실측 데이터 기반</div>
+  <h2 style="font-size:26px;margin-bottom:6px">상담사 월 <span class="ac">43.6시간 &rarr; 10.9시간</span> &mdash; 75% 절감</h2>
+  <p style="font-size:13px;color:var(--gray);margin-bottom:4px">실제 상담 2,725건의 상담사 메시지 수를 분석하여 산출한 투입 시간 기반입니다.</p>
+  <div class="divider"></div>
+
+  <div class="pc-grid pc4" style="margin-bottom:14px">
+    <div class="pc g">
+      <div class="tag">완전 해결</div>
+      <div class="stat-grid sg2" style="gap:6px;margin:8px 0">
+        <div class="stat-box" style="padding:10px 8px">
+          <div class="val" style="font-size:20px;color:var(--gray)">22.1h</div>
+          <div class="lbl">현재</div>
+        </div>
+        <div class="stat-box" style="padding:10px 8px">
+          <div class="val g" style="font-size:20px;color:var(--purple)">0h</div>
+          <div class="lbl">ALF 후</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--gray);margin:0">
+        <strong>427건/월</strong> &times; 건당 3.1분<br>
+        &rarr; 상담사 투입 <span class="ac">0분</span>
+      </p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px">재입고 &middot; 사이즈 &middot; 쿠폰 &middot; 반품정책 &middot; 배송안내</p>
+    </div>
+    <div class="pc g">
+      <div class="tag">승인만 필요</div>
+      <div class="stat-grid sg2" style="gap:6px;margin:8px 0">
+        <div class="stat-box" style="padding:10px 8px">
+          <div class="val" style="font-size:20px;color:var(--gray)">5.8h</div>
+          <div class="lbl">현재</div>
+        </div>
+        <div class="stat-box" style="padding:10px 8px">
+          <div class="val g" style="font-size:20px;color:var(--purple)">0.1h</div>
+          <div class="lbl">ALF 후</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--gray);margin:0">
+        <strong>91건/월</strong> &times; 건당 3.8분<br>
+        &rarr; 상담사 <span class="ac">버튼 1번 (수초)</span>
+      </p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px">취소 &middot; 반품접수 &middot; 교환접수 &middot; 주소변경</p>
+    </div>
+    <div class="pc b">
+      <div class="tag">초벌 상담</div>
+      <div class="stat-grid sg2" style="gap:6px;margin:8px 0">
+        <div class="stat-box" style="padding:10px 8px">
+          <div class="val" style="font-size:20px;color:var(--gray)">16.7h</div>
+          <div class="lbl">현재</div>
+        </div>
+        <div class="stat-box" style="padding:10px 8px">
+          <div class="val" style="font-size:20px;color:#6B7280">3.0h</div>
+          <div class="lbl">ALF 후</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--gray);margin:0">
+        <strong>182건/월</strong> &times; 건당 5.5분<br>
+        &rarr; 상담사 <span style="font-weight:600">판단만 (1분)</span>
+      </p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px">AS접수 &middot; 불량판정 &middot; 정보수집→요약</p>
+    </div>
+    <div class="pc a">
+      <div class="tag">상담사 필수</div>
+      <div class="stat-grid sg2" style="gap:6px;margin:8px 0">
+        <div class="stat-box" style="padding:10px 8px">
+          <div class="val" style="font-size:20px;color:var(--gray)">11.8h</div>
+          <div class="lbl">현재</div>
+        </div>
+        <div class="stat-box" style="padding:10px 8px">
+          <div class="val" style="font-size:20px;color:var(--text-muted)">7.8h</div>
+          <div class="lbl">ALF 후</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--gray);margin:0">
+        <strong>209건/월</strong> &times; 건당 3.4분<br>
+        &rarr; 주제 분류로 <span style="font-weight:600">배정 시간만 절감</span>
+      </p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px">복합클레임 &middot; 수선견적 &middot; 협업라우팅</p>
+    </div>
+  </div>
+
+  <div class="two-col" style="gap:20px;align-items:start">
+    <div class="hl g" style="padding:16px 18px">
+      <p style="font-size:14px;color:#1F2937;font-weight:700;margin-bottom:8px">현재 &mdash; 상담사 시간 배분</p>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">AS/불량 (건당 5.5분)</span><span>27%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-p" style="width:100%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">교환/사이즈 (건당 4.3분)</span><span>19%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-g" style="width:70%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">제품문의/사이즈 (건당 3.1분)</span><span>22%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-b" style="width:81%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">취소/반품 (건당 2.7분)</span><span>15%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-a" style="width:56%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-meta"><span class="name">기타 (재입고/쿠폰/배송)</span><span>17%</span></div>
+        <div class="bar-track"><div class="bar-fill bf-r" style="width:63%"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="stat-grid sg2" style="margin-bottom:12px">
+        <div class="stat-box">
+          <div class="val" style="font-size:28px;color:var(--gray)">43.6h</div>
+          <div class="lbl">현재 상담사 투입/월</div>
+        </div>
+        <div class="stat-box">
+          <div class="val g" style="font-size:28px;color:var(--purple)">10.9h</div>
+          <div class="lbl">ALF 후 상담사 투입/월</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="font-size:28px;color:var(--gray)">3.4분</div>
+          <div class="lbl">현재 건당 투입</div>
+        </div>
+        <div class="stat-box">
+          <div class="val g" style="font-size:28px;color:var(--purple)">0.8분</div>
+          <div class="lbl">ALF 후 건당 투입</div>
+        </div>
+      </div>
+      <div class="hl" style="padding:12px 16px">
+        <p style="font-size:12px;margin:0"><span class="ac">핵심:</span> 완전 해결(-22.1h)뿐 아니라 승인(-5.7h), 초벌(-4.0h)까지 합쳐 <strong>월 32.7시간이 돌아옵니다.</strong> 상담사는 복잡한 판단이 필요한 209건에만 집중합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  S9: ALF가 해결할 수 없는 것 — keep as-is
+============================= -->
+<section>
+  <div class="slide-label">투명한 안내</div>
+  <h2 style="font-size:28px;margin-bottom:6px">전체의 약 25%는 <span class="ac">상담사가 필요합니다</span></h2>
+  <div class="divider"></div>
+  <p style="font-size:14px;color:var(--gray);margin-bottom:18px">ALF는 모든 걸 해결하는 도구가 아닙니다. 사람의 판단이 필요한 영역은 명확히 구분합니다.</p>
+
+  <div class="pc-grid" style="margin-bottom:16px">
+    <div class="pc a">
+      <div class="tag">상담사 필수 &mdash; 16.3%</div>
+      <h3>사람의 판단이 필요한 케이스</h3>
+      <ul>
+        <li>AS 수선 비용 견적 (~25건)</li>
+        <li>복합 불량 &mdash; 여러 부위 (~18건)</li>
+        <li>부분 취소 + 환불 조정 (~15건)</li>
+        <li>외부 플랫폼 구매 CS (~20건)</li>
+        <li>고객 ALF 거부 / 감정 격화 (~31건)</li>
+      </ul>
+    </div>
+    <div class="pc">
+      <div class="tag">ALF 대상 외 &mdash; 6.2%</div>
+      <h3>CS가 아닌 영역</h3>
+      <ul>
+        <li>인플루언서 초대 &middot; 촬영 협업 (~56건)</li>
+        <li>마케팅 의사결정이 필요한 아웃바운드</li>
+        <li style="margin-top:8px;color:var(--gray);font-size:12px"><em>ALF가 "협업 관련 문의는 담당자에게 연결해드리겠습니다"로 라우팅 가능</em></li>
+      </ul>
+    </div>
+    <div class="pc">
+      <div class="tag">ALF가 시작 + 상담사 마무리 &mdash; 8.7%</div>
+      <h3>부분 자동화 가능</h3>
+      <ul>
+        <li>AS 수선 진행 중 문의 (~20건)</li>
+        <li>매장 재고 확인 (~15건)</li>
+        <li>인스타 사진 기반 상품 식별 (~15건)</li>
+        <li>의도 파악 실패 (~25건)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hl" style="padding:14px 18px">
+    <p style="font-size:13px;margin:0"><span class="ac">설계 원칙:</span> "사람이랑 얘기하고 싶어요" 3회 요청 시 즉시 상담사 연결. 감정 격화(법적 언급 등) 감지 시 즉시 전환. ALF가 감정을 악화시키면 안 됩니다.</p>
+  </div>
+</section>
+
+<!-- ============================
+  S10: 도입 로드맵 — keep as-is
+============================= -->
+<section>
+  <div class="slide-label">도입 로드맵</div>
+  <h2 style="font-size:26px;margin-bottom:6px">단계적으로 적용합니다 &mdash; <span class="ac">벨리에 준비 부담은 1단계뿐</span></h2>
+  <div class="divider"></div>
+
+  <div class="two-col" style="gap:32px;align-items:start">
+    <div>
+      <div class="tl-item">
+        <div class="tl-dot g"></div>
+        <div>
+          <div class="tl-label">1단계 &mdash; FAQ/RAG (2~3주)</div>
+          <div class="tl-text" style="font-size:13px">일반봇 &rarr; ALF 전환 + 지식 응답 세팅<br><span class="ac">해결률 38%</span> (일반봇 대비 3.5배)</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot g"></div>
+        <div>
+          <div class="tl-label">2단계 &mdash; 시스템 연동 (+2~3주)</div>
+          <div class="tl-text" style="font-size:13px">카페24 &middot; 이지어드민 Task API 연결<br><span class="ac">해결률 55%</span> (일반봇 대비 5.0배)</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot b"></div>
+        <div>
+          <div class="tl-label">3단계 &mdash; 승인노드 (+1주)</div>
+          <div class="tl-text" style="font-size:13px">상담사 판단 버튼 추가<br><span class="ac">해결률 65%</span> (일반봇 대비 6.0배)</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot a"></div>
+        <div>
+          <div class="tl-label">안정화 (도입 후 1~2개월)</div>
+          <div class="tl-text" style="font-size:13px">운영 데이터 축적 + 감정 예방 효과<br><span class="ac">해결률 68.8%</span> (일반봇 대비 6.3배)</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="pc g" style="margin-bottom:14px">
+        <div class="tag">1단계 &mdash; 벨리에 준비 필요</div>
+        <h3>FAQ 텍스트 정리 (14개 항목)</h3>
+        <ul>
+          <li>제품별 사이즈 가이드 (데님, 아우터 등)</li>
+          <li>반품/교환 정책, AS 안내</li>
+          <li>재입고 정책, 쿠폰 정책</li>
+          <li style="margin-top:6px;font-size:12px"><em>현재 상담사가 안내하는 내용을 문서화</em></li>
+        </ul>
+      </div>
+      <div class="pc" style="margin-bottom:14px">
+        <div class="tag">2단계 &mdash; 추가 준비 없음</div>
+        <h3>기존 시스템을 그대로 사용</h3>
+        <p>이미 사용 중인 카페24 &middot; 이지어드민의 기능(앱함수)을 그대로 연동합니다.</p>
+      </div>
+      <div class="pc">
+        <div class="tag">3단계 &mdash; 추가 준비 없음</div>
+        <h3>기존 상담사 판단 기준을 그대로 사용</h3>
+        <p>현재 상담사가 직접 판단하고 있는 기준을 버튼 형태로 옮기는 것이므로 추가 부담이 없습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+  S11: 상담사 역할 변화 + CTA — keep as-is
+============================= -->
+<section>
+  <div class="slide-label">상담사 역할 변화</div>
+  <h2 style="font-size:26px;margin-bottom:6px">반복 업무에서 벗어나 <span class="ac">높은 가치의 업무에 집중</span></h2>
+  <div class="divider"></div>
+
+  <div class="pc-grid pc2" style="margin-bottom:16px">
+    <div class="pc a">
+      <div class="tag">현재 &mdash; 일반봇 체제</div>
+      <h3>모든 문의를 상담사가 처리</h3>
+      <ul>
+        <li>하루 종일 "사이즈 알려주세요"에 답변</li>
+        <li>카페24 어드민에서 취소 &middot; 교환 수동 처리</li>
+        <li>밤 &middot; 주말 문의 쌓여서 월요일 아침 폭주</li>
+        <li>불량 신고 전체 프로세스 수동 (건당 10~15분)</li>
+        <li style="margin-top:6px"><strong>월 75시간 &mdash; 모든 상담에 균등하게 시간 소모</strong></li>
+      </ul>
+    </div>
+    <div class="pc g">
+      <div class="tag">도입 후 &mdash; ALF 체제</div>
+      <h3>복잡한 케이스에 집중</h3>
+      <ul>
+        <li>사이즈, 취소, 교환 &rarr; ALF가 자동 처리</li>
+        <li>24시간 처리 &rarr; 밀린 건 없음</li>
+        <li>불량 판정 &rarr; 버튼 1번 (수초)</li>
+        <li>AS 수선 품질 관리, VIP 고객 케어에 집중</li>
+        <li style="margin-top:6px"><strong>월 19시간 &mdash; 하루 약 1시간만 CS에 할애</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cta-box">
+    <h2>벨리에 상담 10건 중 7건, ALF가 해결합니다</h2>
+    <p>실 데이터 2,725건 분석 기반 &mdash; 추측이 아닌 데이터로 설계한 자동화 로드맵<br>일반봇 해결률 10.9% &rarr; ALF 68.8% &nbsp;|&nbsp; 첫 응답 6시간 &rarr; 5초 &nbsp;|&nbsp; 상담사 업무 75시간 &rarr; 19시간</p>
+  </div>
+</section>
+
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+Reveal.initialize({
+  width: 1280, height: 720, margin: 0.04,
+  hash: true, transition: 'fade', transitionSpeed: 'default',
+  slideNumber: 'c/t', controls: true, progress: true, center: false,
+  backgroundTransition: 'fade',
+  autoAnimateEasing: 'ease-out',
+  autoAnimateDuration: 0.6,
+});
+</script>
+</body>
+</html>

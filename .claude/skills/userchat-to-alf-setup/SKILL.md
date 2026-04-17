@@ -31,9 +31,12 @@ Stage 5: ALF Setup Files (Python + LLM) [~10 min]
     ↓
 Stage 6: ALF Document Export (LLM) [~10 min]
     → rules/ (individual rule files), rag/ (individual RAG docs)
+    ↓
+Value Proposition Slide (LLM) [~5 min]
+    → {company}_ALF전환_가치제안.html (Reveal.js 프레젠테이션)
 ```
 
-**Total Time**: ~35-45 minutes
+**Total Time**: ~40-50 minutes
 
 ## Parameters
 
@@ -143,7 +146,50 @@ Run `/stage6-alf-document-export`.
 
 ---
 
-### 7. Validate and Summarize
+### 7. Generate Value Proposition Slide (LLM)
+
+파이프라인 산출물 데이터를 기반으로 고객사 맞춤 ALF 가치 제안 프레젠테이션을 생성합니다.
+
+**Template**: `templates/ALF_VALUE_PROPOSITION_template.html` (Reveal.js)
+
+**Source data:**
+- `01_clustering/`: 분석 건수, 클러스터 수, 날짜 범위
+- `02_extraction/patterns.json`: 상위 문의 유형, 빈도, 패턴
+- `02_extraction/faq.json`: FAQ 항목 수
+- `03_sop/*.sop.md`: SOP 수, 주요 시나리오
+- `06_sales_report/alf_setup/rules_draft.md`: 규칙 수, 주요 규칙 내용
+- `06_sales_report/alf_setup/rag_items.md`: 지식 항목 수, 항목 목록
+- `05_tasks/TASK*.md`: 태스크 수, 태스크 목록
+- `07_alf_documents/rules/`, `07_alf_documents/rag/`: 개별 파일 수
+
+**슬라이드 구성** (템플릿 구조 기반, 데이터에 맞게 조정):
+
+| # | 슬라이드 | 내용 | 소스 |
+|---|---------|------|------|
+| S1 | **커버** | "{Company} 상담 X건 중 Y건, ALF가 해결할 수 있습니다" + 분석 건수/유형 수/ALF 해결률/첫 응답 시간 | 전체 |
+| S2 | **현재 상황** | 현행 봇의 한계 (해결률, 전환률) — 데이터에서 봇 메시지 패턴 분석 | clustering, patterns |
+| S3 | **반복 문의 패턴** | 야간/주말 비율 + Top 문의 유형 바 차트 | patterns, clustering |
+| S4 | **ALF 세팅 완료** | 규칙/지식/태스크 수량 + 항목 pill 목록 | rules, rag_items, tasks |
+| S5~S7 | **ALF 데모** (Top 2~3 시나리오) | 주요 문의 유형별 Before/After + 채팅 위젯 데모 | SOPs, patterns |
+| S8 | **숫자로 보는 차이** | ALF 해결 가능 비율, 주요 유형별 커버리지 | patterns, SOPs |
+| S9 | **ALF 관여 레이어** | 완전해결/승인노드/초벌상담/주제분류 4단계 | SOPs, tasks |
+| S10 | **ALF가 못 하는 것** | 상담사 필요 케이스 (데이터 기반) | SOPs escalation |
+| S11 | **도입 로드맵** | Phase 1 (즉시) → Phase 2 (API 연동) 타임라인 | tasks, api_requirements |
+| S12 | **CTA** | 다음 단계 안내 + 연락처 | — |
+
+**작성 규칙:**
+- 템플릿의 CSS/스타일을 그대로 사용 (Reveal.js CDN, Pretendard 폰트, 컬러 변수)
+- 모든 수치는 파이프라인 산출물에서 추출한 실제 데이터 사용 — 추측/가공 금지
+- 데모 슬라이드의 채팅 위젯(`ct-widget`)에는 SOP에서 추출한 실제 시나리오 사용
+- `{company}` 이름은 공식 회사명 (한글) 사용
+- 슬라이드 수는 데이터에 따라 10~15개 범위로 조정 (데모 시나리오 수에 따라 유동적)
+
+**Output:**
+- `results/{company}/{company}_ALF전환_가치제안.html`
+
+---
+
+### 8. Validate and Summarize
 
 **Verify all outputs exist:**
 ```
@@ -157,7 +203,8 @@ results/{company}/
 ├── 07_alf_documents/
 │   ├── rules/      (01~09_*.md)
 │   └── rag/        (*.md)
-└── {company}_api_requirements.md
+├── {company}_api_requirements.md
+└── {company}_ALF전환_가치제안.html  ← NEW
 ```
 
 **Communicate results:**
@@ -173,6 +220,7 @@ results/{company}/
   - Tasks: {task_count} / APIs: {api_count}
 
 📁 Output: results/{company}/
+📊 Value Proposition: {company}_ALF전환_가치제안.html
 🚀 다음 단계:
   - /settings-rules 로 규칙 업로드
   - /settings-rag 로 RAG 문서 업로드
