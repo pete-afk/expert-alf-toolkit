@@ -50,6 +50,10 @@ Value Proposition Slide (LLM) [~5 min]
 - `sample_size`: 기본값 3000
 - `k`: 기본값 "auto"
 
+### App Functions (앱태스크 연동)
+- **app_functions** (default: false): 앱태스크(앱함수) 연동 여부. Stage 5에 전달됨 — 상세 설명은 `/stage5-sop-to-guide` Parameters 참조
+- **app_functions_services** (default: `[]`): 연동된 앱 서비스 목록. Stage 5에 전달됨
+
 ### Optional
 - **auto_proceed** (default: true): `true` = 단계 간 자동 진행, `false` = 단계마다 확인
 
@@ -64,6 +68,11 @@ Value Proposition Slide (LLM) [~5 min]
   - If missing: run `/request-api-key` flow inline (send Channel.io message, wait for reply, write to .env)
   - MUST NOT proceed until key is confirmed valid
 - Validate: `pip install -r requirements.txt`
+- **Collect app function info**: Ask whether the client uses app task functions (앱태스크):
+  - "이 고객사는 이지어드민, 카페24, 사방넷 등 **앱태스크(앱함수) 연동**을 사용하고 있나요?"
+  - If yes: ask which services are connected (이지어드민 / 카페24 / 사방넷 / 기타)
+  - Store as `app_functions=true` and `app_functions_services=[...]`
+  - This will be passed to Stage 5 so that task planning uses app functions where applicable instead of custom code nodes
 
 ---
 
@@ -113,6 +122,10 @@ Run `/stage3-sop-generation` with auto-detected parameters.
 ### 5. Execute Stage 5: ALF Setup Files
 
 Run `/stage5-sop-to-guide` with **pipeline-mode overrides**.
+
+**Pipeline-mode overrides passed to Stage 5:**
+- `app_functions` = value collected in Step 1 (skip stage5's own question)
+- `app_functions_services` = list collected in Step 1
 
 **⚠️ Pipeline-mode: Step 2 + Step 5만 실행. 나머지 스킵.**
 

@@ -89,6 +89,8 @@ results/{company}/
 - **alf_task_cost** (기본값: `200`): ALF 태스크 실행 비용 (원/건)
 - **phase2_min_krw** / **phase2_max_krw**: Phase 2 외주 개발비 범위 (원)
 - **output_dir** (기본값: `results/{company}/06_sales_report`): 출력 디렉토리
+- **app_functions** (기본값: `false`): 고객사가 앱태스크(앱함수) 연동을 사용하는지 여부. `true` 시 Step 5 태스크 기획에서 코드노드 대신 앱함수를 우선 적용 가능한 항목을 별도 분류함
+- **app_functions_services** (기본값: `[]`): 연동된 앱 서비스 목록. 예: `["이지어드민", "카페24", "사방넷"]`
 
 ---
 
@@ -108,6 +110,11 @@ results/{company}/
    - `monthly_volume` (show estimated value + calculation basis, user confirms or overrides)
    - `hourly_wage` (show default 15,100원, confirm or update)
    - `phase2_min_krw` / `phase2_max_krw` (outsourcing dev cost range)
+   - **앱태스크(앱함수) 연동 여부**: "이지어드민·카페24·사방넷 등 앱함수를 연동하고 있나요? (예/아니오)"
+     - 예: 연동된 서비스 목록 선택 (이지어드민 / 카페24 / 사방넷 / 기타)
+     - Store as `app_functions=true`, `app_functions_services=[...]`
+     - 아니오: `app_functions=false`로 설정, 태스크는 코드노드 기반으로 기획
+     - **Skip if `app_functions` was already provided (pipeline mode)**
 4. Auto-resolve file paths:
    - `messages_csv` = `results/{company}/01_clustering/{company}_messages.csv`
    - `tags_xlsx` = `results/{company}/01_clustering/{company}_tags.xlsx`
@@ -440,6 +447,14 @@ Separate scenarios that include API calls into individual task files, one file p
 - 고객 응답 기반 분기가 3단계 이상인 복잡한 플로우
 - 상담사 연결 조건이 명확하게 정의된 시나리오
 
+**앱함수(앱태스크) 연동 시 추가 분석 (`app_functions=true`):**
+
+`app_functions=true`이면 [APP_FUNCTIONS.md](APP_FUNCTIONS.md)를 Read로 로드하여 다음을 수행:
+- 서비스별 앱함수 스펙 표(이지어드민/사방넷/카페24/스프레드시트)를 참조하여 각 태스크를 `앱함수` / `코드노드` / `앱함수 + 코드노드`로 **일괄 분류** (배치 처리, 태스크별 개별 LLM 호출 금지)
+- 분류 결과를 각 태스크 파일 상단 요약표의 "처리 방식" 열에 기재
+
+`app_functions=false`이면: 모든 태스크를 코드노드 기준으로 기획, "처리 방식" 열 생략.
+
 **각 태스크 파일 형식**: `templates/TASK_template.md` 구조를 따릅니다.
 
 SVG 생성 (mmdc 설치 시):
@@ -468,6 +483,7 @@ Define the APIs used in tasks so that the development team can review them.
 ```
 ✅ Step 5 complete
   - 05_tasks/: TASK 파일 {X}개 생성
+    - 앱함수 처리: {N}개 / 코드노드 처리: {M}개 / 혼합: {K}개  [app_functions=true일 때만 출력]
   - {company}_api_requirements.md: 필수 API {X}개 / 선택 API {X}개
 ```
 
